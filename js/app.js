@@ -1,11 +1,12 @@
-/* app.js — topic-page sidebar enhancement (CONTRACT §6).
+/* app.js — sidebar enhancement (CONTRACT §6).
  *
- * Runs on generated topics/<slug>.html pages. Fetches ../search-index.json,
- * renders #sidebar as tag-grouped page links (same grouping as wiki.html:
- * primary tag = tags[0], groups sorted alphabetically, pages by title),
- * marks the current page with .current, and adds a small substring filter
- * (input.sidebar-filter) over titles. On fetch failure: silent no-op —
- * the sidebar stays empty and CSS collapses it.
+ * Runs on generated topics/<slug>.html pages AND on the generated wiki.html
+ * index. Fetches search-index.json (path-adjusted for page depth), renders
+ * #sidebar as tag-grouped page links (same grouping as wiki.html's main
+ * listing: primary tag = tags[0], groups sorted alphabetically, pages by
+ * title), marks the current page with .current, and adds a small substring
+ * filter (input.sidebar-filter) over titles. On fetch failure: silent no-op
+ * — the sidebar stays empty and CSS collapses it.
  */
 (function () {
   'use strict';
@@ -13,7 +14,10 @@
   var sidebar = document.getElementById('sidebar');
   if (!sidebar || typeof fetch !== 'function') return;
 
-  fetch('../search-index.json')
+  // Topic pages live one level down in topics/; wiki.html sits at the root.
+  var prefix = document.body.classList.contains('page-topic') ? '../' : '';
+
+  fetch(prefix + 'search-index.json')
     .then(function (res) {
       if (!res.ok) throw new Error('http ' + res.status);
       return res.json();
@@ -71,9 +75,9 @@
         .forEach(function (p) {
           var li = document.createElement('li');
           var a = document.createElement('a');
-          // p.url is site-root-relative ("topics/slug.html"); this page
-          // lives inside topics/, so step up one level.
-          a.href = '../' + p.url;
+          // p.url is site-root-relative ("topics/slug.html"); prefix steps
+          // up one level on topic pages, nothing on the root wiki page.
+          a.href = prefix + p.url;
           a.textContent = p.title;
           a.setAttribute('data-title', String(p.title).toLowerCase());
           var urlFile = String(p.url).split('/').pop();

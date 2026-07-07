@@ -357,7 +357,9 @@ body.page-landing {
   letter-spacing: .06em;
   color: var(--accent);
 }
-.kicker::before { content: "// "; color: var(--accent); }
+/* the // sigil and any / separators sit in text color; the words stay orange */
+.kicker::before { content: "// "; color: var(--text); }
+.kicker .sep { color: var(--text); }
 
 .page-title {
   margin: 0 0 .6rem;
@@ -640,6 +642,16 @@ math[display="block"] {
   max-width: 52rem;
   margin: 0 auto;
   padding: 2.25rem 1.25rem 4.5rem;
+}
+
+/* wiki.html wraps the listing in the same .layout as topic pages (sidebar +
+   content); the layout provides padding and width, the listing just flexes */
+.layout > .wiki-index {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 46rem;
+  margin: 0;
+  padding: 0;
 }
 
 .wiki-index .kicker { margin-bottom: 1.6rem; }

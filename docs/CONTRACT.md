@@ -174,7 +174,10 @@ Topic page body (`template.html` renders this; `$…$` are pandoc variables):
 
 Generated `wiki.html` main content (emitted by `tools/build_index.py`; body
 class `page-wiki`; groups = primary tag = first tag, sections sorted
-alphabetically, pages by title):
+alphabetically, pages by title). The listing is wrapped in the same
+`.layout` as topic pages, with the js/app.js sidebar mount before it
+(`<div class="layout"><nav class="sidebar" id="sidebar" …></nav> … </div>`),
+and the page loads `js/app.js` before the search scripts:
 
 ```html
 <main class="wiki-index">
@@ -250,7 +253,7 @@ level-of-detail keyed to zoom `k` (below `k≈0.9` only top-degree labels
 visible, above all labels; smooth opacity). Legend of tag→color in
 `#graph-legend`. Force params baked in one clearly-marked const block.
 
-`js/app.js` (topic pages): fetch `../search-index.json`, render the sidebar
+`js/app.js` (topic pages and wiki.html): fetch `search-index.json` (prefix `../` on topic pages), render the sidebar
 `#sidebar` as tag-grouped links (same grouping as wiki.html), mark the
 current page `.current`, include a small client-side filter input
 `input.sidebar-filter`. On fetch failure: leave sidebar empty (CSS collapses it).

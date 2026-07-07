@@ -340,15 +340,19 @@ def build_wiki_html(pages, site_url):
     <div id="search-out" class="search-out" hidden></div>
   </div>
 </header>
-<main class="wiki-index">
+<div class="layout">
+  <nav class="sidebar" id="sidebar" aria-label="all pages"></nav>
+  <main class="wiki-index">
   <p class="kicker">index of all pages</p>
 {chr(10).join(sections)}
-</main>
+  </main>
+</div>
 <footer class="page-foot">
   <span>denied.systems — a field guide to autonomy in contested airspace</span>
   <a href="index.html">← index</a>
 </footer>
 <aside id="assistant" class="assistant-panel" hidden aria-label="assistant (disabled)"></aside>
+<script src="js/app.js"></script>
 <script src="js/search.js"></script>
 <script>SiteSearch.boot('wiki')</script>
 </body>
