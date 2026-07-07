@@ -1,0 +1,34 @@
+{
+  "nodes": [
+    {
+      "id": "gnss-denied-navigation",
+      "title": "GNSS-Denied Navigation",
+      "url": "topics/gnss-denied-navigation.html",
+      "tags": [
+        "navigation",
+        "sensor-fusion"
+      ],
+      "degree": 1
+    },
+    {
+      "id": "visual-inertial-odometry",
+      "title": "Visual-Inertial Odometry",
+      "url": "topics/visual-inertial-odometry.html",
+      "tags": [
+        "sensor-fusion",
+        "perception"
+      ],
+      "degree": 1
+    }
+  ],
+  "edges": [
+    {
+      "source": "gnss-denied-navigation",
+      "target": "visual-inertial-odometry"
+    },
+    {
+      "source": "visual-inertial-odometry",
+      "target": "gnss-denied-navigation"
+    }
+  ]
+}

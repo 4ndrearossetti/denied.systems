@@ -226,7 +226,8 @@ degrade silently to static content when `fetch` fails.
 window.SiteSearch = {
   boot(mode),        // 'wiki' | 'graph': fetches search-index.json, wires
                      // #search-in / #search-out with keyboard (↑↓ Enter Esc)
-                     // and click selection.
+                     // and click selection. The keyboard-selected result row
+                     // carries class `sel` (styled as `.search-out > .sel`).
   query(q)           // → ranked [{id,title,summary,url,tags}] (for reuse/tests)
 }
 ```

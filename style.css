@@ -1,0 +1,848 @@
+/* ==========================================================================
+   denied.systems — single site stylesheet
+   Built against docs/CONTRACT.md §5 (markup) and §7 (tokens).
+   No imports, no external fonts, no images. One file for every page.
+   ========================================================================== */
+
+/* ---- 1. Tokens (CONTRACT §7) -------------------------------------------- */
+
+:root {
+  --bg: #0a0d12;        /* page background            */
+  --surface: #0f141b;   /* panels, code blocks        */
+  --surface-2: #151c26; /* hover, inline code         */
+  --line: #1e2836;      /* hairline borders           */
+  --text: #c8d2de;      /* body text                  */
+  --dim: #8494a7;       /* secondary text             */
+  --faint: #5c6b7d;     /* metadata, hints            */
+  --accent: #e0aa54;    /* links, focus, brand mark   */
+  --accent-2: #6fb3c8;  /* secondary accent           */
+  /* tag palette, in assignment order: */
+  --tag-1: #d9a55a;  --tag-2: #6fb3c8;  --tag-3: #8fae8b;
+  --tag-4: #a48fb8;  --tag-5: #c9826b;  --tag-6: #7f96b8;
+  --mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ---- 2. Reset / base ----------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16.5px;
+  line-height: 1.65;
+}
+
+[hidden] { display: none !important; }
+
+img, svg { max-width: 100%; }
+
+a { color: var(--accent); text-decoration: none; }
+
+:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection { background: rgba(224, 170, 84, .25); }
+
+/* ---- 3. Shared header ----------------------------------------------------- */
+
+.site-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .35rem 1.4rem;
+  padding: .8rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: .85rem;
+}
+
+.brand {
+  color: var(--text);
+  font-weight: 600;
+  letter-spacing: .01em;
+  white-space: nowrap;
+}
+.brand:hover { color: var(--accent); }
+.brand-tld { color: var(--accent); font-weight: 400; }
+
+.site-nav {
+  margin-left: auto;
+  display: flex;
+  gap: 1.1rem;
+}
+.site-nav a { color: var(--dim); }
+.site-nav a:hover { color: var(--text); }
+
+/* view toggle (wiki.html / graph.html only) */
+.view-toggle {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.view-toggle .vt {
+  padding: .3rem .8rem;
+  color: var(--dim);
+  border-left: 1px solid var(--line);
+}
+.view-toggle .vt:first-child { border-left: 0; }
+.view-toggle .vt:hover { color: var(--text); background: var(--surface); }
+.view-toggle .vt.active {
+  color: var(--accent);
+  background: var(--surface-2);
+}
+
+/* ---- 4. Search (header widget on wiki + graph) --------------------------- */
+
+.search { position: relative; }
+
+#search-in {
+  width: 15rem;
+  max-width: 100%;
+  padding: .35rem .7rem;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font-family: var(--mono);
+  font-size: .85rem;
+}
+#search-in::placeholder { color: var(--faint); }
+#search-in:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+/* kill UA extras on type=search */
+#search-in::-webkit-search-decoration,
+#search-in::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+.search-out {
+  position: absolute;
+  top: calc(100% + .4rem);
+  right: 0;
+  z-index: 50;
+  width: 24rem;
+  max-width: calc(100vw - 2rem);
+  max-height: 60vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .55);
+}
+
+/* Result rows — structural selectors so any sane markup from js/search.js
+   (divs or anchors, one element per result) gets styled. */
+.search-out > * {
+  display: block;
+  padding: .55rem .8rem;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  color: var(--text);
+}
+.search-out > *:last-child { border-bottom: 0; }
+.search-out > *:hover { background: var(--surface-2); }
+.search-out > .sel,
+.search-out > *.sel {
+  background: var(--surface-2);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+/* first inline element in a row = title, following = summary */
+.search-out > * > :first-child {
+  display: block;
+  font-family: var(--mono);
+  font-size: .85rem;
+  color: var(--text);
+}
+.search-out > .sel > :first-child { color: var(--accent); }
+.search-out > * > :not(:first-child) {
+  display: block;
+  font-size: .8rem;
+  color: var(--dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* "no results" style text nodes wrapped in a single muted element */
+.search-out > .empty, .search-out > .none {
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: .8rem;
+  cursor: default;
+}
+
+/* ---- 5. Landing page ------------------------------------------------------ */
+
+.landing {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 3.5rem 1.25rem 5rem;
+}
+
+.site-title {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: clamp(2.1rem, 7vw, 3.1rem);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+  color: var(--text);
+}
+
+.site-sub {
+  margin: .8rem 0 0;
+  font-family: var(--mono);
+  font-size: .95rem;
+  color: var(--dim);
+  max-width: 38rem;
+}
+
+.cta-row {
+  margin: 1.6rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem;
+}
+
+.cta-row .cta {
+  font-family: var(--mono);
+  font-size: .85rem;
+  color: var(--accent);
+  border: 1px solid var(--line);
+  border-bottom: 1px solid var(--line); /* override .landing a underline */
+  border-radius: 4px;
+  padding: .5rem .9rem;
+  background: var(--surface);
+}
+
+.cta-row .cta:hover {
+  border-color: var(--accent);
+  background: var(--surface-2);
+}
+
+.landing section { margin-top: 3rem; }
+
+.landing h2 {
+  font-family: var(--mono);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 .7rem;
+  padding-bottom: .35rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.landing p { color: var(--text); }
+.landing a { border-bottom: 1px solid rgba(224, 170, 84, .35); }
+.landing a:hover { border-bottom-color: var(--accent); }
+
+/* ---- 6. Topic page layout ------------------------------------------------- */
+
+.layout {
+  display: flex;
+  gap: 2.75rem;
+  max-width: 70rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+/* -- sidebar (rendered by js/app.js; empty on fetch failure → collapses) -- */
+
+.sidebar {
+  flex: 0 0 15rem;
+  align-self: flex-start;
+  position: sticky;
+  top: 1.25rem;
+  max-height: calc(100dvh - 2.5rem);
+  overflow-y: auto;
+  font-family: var(--mono);
+  font-size: .8rem;
+  scrollbar-width: thin;
+}
+.sidebar:empty { display: none; }
+
+.sidebar input.sidebar-filter {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: .3rem .6rem;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: .8rem;
+}
+.sidebar input.sidebar-filter::placeholder { color: var(--faint); }
+.sidebar input.sidebar-filter:focus { outline: none; border-color: var(--accent); }
+
+.sidebar h2, .sidebar h3, .sidebar .tag-head {
+  margin: 1.1rem 0 .35rem;
+  font-size: .7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--faint);
+  border: 0;
+  padding: 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  margin: 0 0 .6rem;
+  padding: 0;
+}
+.sidebar li { margin: 0; }
+
+.sidebar a {
+  display: block;
+  padding: .22rem .5rem;
+  margin-left: -.5rem;
+  border-radius: 4px;
+  color: var(--dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sidebar a:hover { color: var(--text); background: var(--surface); }
+.sidebar a.current, .sidebar .current > a {
+  color: var(--accent);
+  background: var(--surface);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+/* -- article column -- */
+
+.prose {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 46rem;
+}
+
+/* ---- 7. Prose furniture: kicker / title / lede / meta / tags -------------- */
+
+.kicker {
+  margin: 0 0 .6rem;
+  font-family: var(--mono);
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--accent);
+}
+
+.page-title {
+  margin: 0 0 .6rem;
+  font-family: var(--mono);
+  font-size: clamp(1.5rem, 4.5vw, 2.1rem);
+  font-weight: 600;
+  letter-spacing: -.015em;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.lede {
+  margin: 0 0 1rem;
+  font-size: 1.08rem;
+  line-height: 1.55;
+  color: var(--dim);
+}
+
+.page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .45rem .6rem;
+  margin: 0 0 2.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: .75rem;
+  color: var(--faint);
+}
+
+/* tag chips — neutral chip, calm per-tag dot from the palette */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: .4em;
+  padding: .12rem .55rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: .72rem;
+  white-space: nowrap;
+}
+.tag::before {
+  content: "";
+  width: .45em;
+  height: .45em;
+  border-radius: 50%;
+  background: var(--faint);
+  flex: none;
+}
+.tag:nth-of-type(6n+1)::before { background: var(--tag-1); }
+.tag:nth-of-type(6n+2)::before { background: var(--tag-2); }
+.tag:nth-of-type(6n+3)::before { background: var(--tag-3); }
+.tag:nth-of-type(6n+4)::before { background: var(--tag-4); }
+.tag:nth-of-type(6n+5)::before { background: var(--tag-5); }
+.tag:nth-of-type(6n+6)::before { background: var(--tag-6); }
+
+/* ---- 8. Prose typography (pandoc body output) ------------------------------ */
+
+.prose h2, .prose h3, .prose h4 {
+  font-family: var(--mono);
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+  margin: 2.4rem 0 .8rem;
+}
+.prose h2 {
+  font-size: 1.3rem;
+  padding-bottom: .35rem;
+  border-bottom: 1px solid var(--line);
+}
+.prose h3 { font-size: 1.05rem; }
+.prose h4 {
+  font-size: .85rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--dim);
+}
+
+.prose p { margin: 0 0 1.1rem; }
+
+.prose a {
+  border-bottom: 1px solid rgba(224, 170, 84, .35);
+}
+.prose a:hover { border-bottom-color: var(--accent); }
+
+.prose ul, .prose ol {
+  margin: 0 0 1.1rem;
+  padding-left: 1.5rem;
+}
+.prose li { margin: .3rem 0; }
+.prose li::marker { color: var(--faint); }
+
+.prose blockquote {
+  margin: 1.4rem 0;
+  padding: .2rem 0 .2rem 1.1rem;
+  border-left: 2px solid var(--accent);
+  color: var(--dim);
+}
+.prose blockquote p:last-child { margin-bottom: 0; }
+
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 2.5rem 0;
+}
+
+.prose table {
+  display: block;            /* enables horizontal scroll on narrow screens */
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 1.4rem 0;
+  font-size: .9rem;
+}
+.prose th, .prose td {
+  padding: .45rem .8rem;
+  border: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+.prose th {
+  font-family: var(--mono);
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--dim);
+  background: var(--surface);
+}
+.prose tbody tr:nth-child(even) td { background: var(--surface); }
+.prose caption {
+  caption-side: bottom;
+  padding-top: .5rem;
+  font-family: var(--mono);
+  font-size: .75rem;
+  color: var(--faint);
+  text-align: center;
+}
+
+.prose figure { margin: 1.6rem 0; text-align: center; }
+.prose figure img { max-width: 100%; height: auto; }
+.prose figcaption {
+  margin-top: .5rem;
+  font-family: var(--mono);
+  font-size: .75rem;
+  color: var(--faint);
+}
+
+/* wikilinks (from filters/wikilinks.lua) */
+a.wikilink {
+  border-bottom: 1px solid rgba(224, 170, 84, .35);
+}
+a.wikilink:hover { border-bottom-color: var(--accent); }
+.wikilink.broken {
+  color: var(--dim);
+  border-bottom: 1px dashed var(--faint);
+  cursor: help;
+}
+
+/* ---- 9. Code — inline, blocks, skylighting tokens -------------------------- */
+
+code, kbd, samp {
+  font-family: var(--mono);
+  font-size: .875em;
+}
+
+/* inline code (not inside a pre) */
+:not(pre) > code {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: .08em .35em;
+  color: var(--text);
+  overflow-wrap: break-word;
+}
+
+pre {
+  margin: 1.4rem 0;
+  padding: .9rem 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow-x: auto;
+  line-height: 1.55;
+  font-size: .85rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+
+/* pandoc skylighting wrapper: div.sourceCode > pre > code.sourceCode */
+div.sourceCode {
+  margin: 1.4rem 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+div.sourceCode pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+code.sourceCode > span { display: inline; }
+
+/* numbered listings (pandoc pre.numberSource) */
+pre.numberSource { padding-left: 2.8rem; position: relative; }
+pre.numberSource code > span { position: relative; }
+pre.numberSource code > span > a:first-child::before {
+  content: counter(source-line);
+  position: absolute;
+  left: -2.2rem;
+  width: 1.6rem;
+  text-align: right;
+  color: var(--faint);
+  -webkit-user-select: none;
+  user-select: none;
+}
+pre.numberSource code > span { counter-increment: source-line; }
+pre.numberSource code { counter-reset: source-line 0; }
+
+/* token scheme — dark, harmonious with §7 (amber keywords, sage strings,
+   cyan types, muted italic comments) */
+code span.kw { color: var(--tag-1); }                     /* keyword        */
+code span.cf { color: var(--tag-1); font-weight: 600; }   /* control flow   */
+code span.im { color: var(--tag-1); font-style: italic; } /* import         */
+code span.dt { color: var(--accent-2); }                  /* data type      */
+code span.dv { color: var(--tag-5); }                     /* decimal value  */
+code span.bn { color: var(--tag-5); }                     /* base-N value   */
+code span.fl { color: var(--tag-5); }                     /* float          */
+code span.st { color: var(--tag-3); }                     /* string         */
+code span.sc { color: var(--tag-3); font-weight: 600; }   /* special char   */
+code span.ss { color: var(--tag-3); font-style: italic; } /* special string */
+code span.vs { color: var(--tag-3); }                     /* verbatim str   */
+code span.ch { color: var(--tag-3); }                     /* char           */
+code span.co { color: var(--faint); font-style: italic; }  /* comment  */
+code span.do { color: var(--faint); font-style: italic; }  /* doc      */
+code span.an { color: var(--faint); font-style: italic; font-weight: 600; } /* annotation */
+code span.cv { color: var(--faint); font-style: italic; }  /* commentVar */
+code span.in { color: var(--faint); font-style: italic; }  /* information */
+code span.fu { color: var(--tag-4); }                     /* function       */
+code span.op { color: var(--dim); }                       /* operator       */
+code span.va { color: var(--text); }                      /* variable       */
+code span.at { color: var(--tag-6); }                     /* attribute      */
+code span.ot { color: var(--tag-6); }                     /* other          */
+code span.pp { color: var(--tag-5); font-style: italic; } /* preprocessor   */
+code span.cn { color: var(--tag-5); }                     /* constant       */
+code span.bu { color: var(--accent-2); }                  /* builtin        */
+code span.ex { color: var(--accent-2); }                  /* extension      */
+code span.al { color: var(--tag-5); font-weight: 600; }   /* alert          */
+code span.er { color: var(--tag-5); text-decoration: underline wavy; } /* error */
+code span.wa { color: var(--tag-1); font-style: italic; } /* warning        */
+
+/* ---- 10. Math (native MathML via pandoc --mathml) --------------------------- */
+
+math {
+  font-family: "Latin Modern Math", "STIX Two Math", "Cambria Math", math, serif;
+  color: var(--text);
+}
+/* inline math sits in the text flow, slightly larger for legibility */
+math { font-size: 1.06em; }
+
+math[display="block"] {
+  display: block math;
+  margin: 1.5rem auto;
+  font-size: 1.15em;
+  text-align: center;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: .15rem 0;
+}
+
+/* ---- 11. Wiki index page ---------------------------------------------------- */
+
+.wiki-index {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 2.25rem 1.25rem 4.5rem;
+}
+
+.wiki-index .kicker { margin-bottom: 1.6rem; }
+
+.tag-group { margin: 0 0 2.4rem; }
+
+.tag-head {
+  margin: 0 0 .2rem;
+  padding-bottom: .35rem;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: .8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--dim);
+}
+
+.page-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.page-list li { border-bottom: 1px solid var(--line); }
+.page-list li:last-child { border-bottom: 0; }
+
+.page-list a {
+  display: block;
+  padding: .8rem .6rem;
+  margin: 0 -.6rem;
+  border-radius: 5px;
+  color: var(--text);
+}
+.page-list a:hover { background: var(--surface); }
+
+.page-list .pl-title {
+  display: block;
+  font-family: var(--mono);
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.page-list a:hover .pl-title { color: var(--accent); }
+
+.page-list .pl-summary {
+  display: block;
+  margin-top: .15rem;
+  font-size: .9rem;
+  color: var(--dim);
+}
+
+.page-list .pl-meta {
+  display: block;
+  margin-top: .3rem;
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--faint);
+}
+
+/* ---- 12. Graph page ---------------------------------------------------------- */
+
+body.page-graph {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+body.page-graph .site-head { flex: none; }
+
+.graph-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  /* fallback sizing if the body.page-graph flex context is absent;
+     inside the flex column this is just the basis and flexes to fit */
+  height: calc(100dvh - 4rem);
+  background: var(--bg);
+}
+
+svg#graph {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+svg#graph:active { cursor: grabbing; }
+
+#graph text {
+  font-family: var(--mono);
+  font-size: 11px;
+  fill: var(--dim);
+  pointer-events: none;
+  user-select: none;
+}
+
+.graph-legend {
+  position: absolute;
+  left: 1rem;
+  bottom: 3rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  padding: .6rem .8rem;
+  background: rgba(15, 20, 27, .88);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--dim);
+  max-width: 14rem;
+  pointer-events: none;
+}
+.graph-legend:empty { display: none; }
+.graph-legend > * {
+  display: flex;
+  align-items: center;
+  gap: .5em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* color swatch emitted by js/graph.js — needs explicit size, the span is
+   otherwise empty (background-only) and would render at zero size */
+.graph-legend .legend-dot {
+  width: .6em;
+  height: .6em;
+  border-radius: 50%;
+  flex: none;
+}
+
+/* graceful-degradation message emitted by js/graph.js when d3/fetch/graph.json
+   are unavailable */
+.graph-error {
+  position: absolute;
+  inset: 40% 1rem auto;
+  z-index: 10;
+  margin: 0;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: .85rem;
+  color: var(--dim);
+}
+
+.graph-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: .6rem;
+  z-index: 10;
+  margin: 0;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--faint);
+  pointer-events: none;
+}
+
+/* ---- 13. Footer --------------------------------------------------------------- */
+
+.page-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: .4rem 1.5rem;
+  max-width: 70rem;
+  margin: 0 auto;
+  padding: 1.1rem 1.25rem 1.6rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: .75rem;
+  color: var(--faint);
+}
+.page-foot a { color: var(--dim); }
+.page-foot a:hover { color: var(--accent); }
+
+/* ---- 14. Assistant stub (hidden in v1; keep a sane shape if ever unhidden) ---- */
+
+.assistant-panel {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 60;
+  width: 22rem;
+  max-width: calc(100vw - 2rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+/* ---- 15. Responsive ------------------------------------------------------------ */
+
+@media (max-width: 900px) {
+  .layout { display: block; padding-top: 1.5rem; }
+  .sidebar { display: none; }           /* sidebar collapses below ~900px */
+  .prose { max-width: 46rem; margin: 0 auto; }
+}
+
+@media (max-width: 640px) {
+  body { font-size: 16px; }
+  .site-head { gap: .5rem .9rem; }
+  .search { flex: 1 1 100%; }
+  #search-in { width: 100%; }
+  .search-out {
+    left: 0;
+    right: 0;
+    width: auto;
+  }
+  .landing { padding-top: 2.25rem; }
+  .graph-legend { left: .6rem; bottom: 2.6rem; padding: .45rem .6rem; }
+  pre { font-size: .8rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}

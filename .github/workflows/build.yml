@@ -1,0 +1,94 @@
+# .github/workflows/build.yml — optional CI for denied.systems.
+#
+# The primary workflow for this repo is LOCAL: run ./build.sh, review the
+# regenerated output (topics/, wiki.html, *.json), and commit it alongside
+# your content change. The site is plain static files — no CI is required
+# to publish it anywhere that can serve a directory.
+#
+# This workflow backs that up on every push to main:
+#   1. rebuilds the site from scratch with the same ./build.sh,
+#   2. fails if the committed generated output does not match the rebuild
+#      (i.e. someone forgot to run ./build.sh, or hand-edited a generated
+#      file — both violate the contribution rules),
+#   3. (optional, commented out below) deploys to GitHub Pages.
+#
+# NOTE on the diff check: build output is byte-identical only for the same
+# pandoc version. The step below installs whatever pandoc Ubuntu's apt ships;
+# if that ever diverges from the version you build with locally (see
+# `pandoc --version`), either update locally to match or swap the apt install
+# for the pinned-release install shown in the comment inside that step.
+
+name: build
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Install pandoc
+        # apt keeps this simple and mirror-fast. To pin the exact version
+        # used locally (recommended once the site matters), replace the two
+        # apt lines with:
+        #   wget -q https://github.com/jgm/pandoc/releases/download/3.6.1/pandoc-3.6.1-1-amd64.deb
+        #   sudo dpkg -i pandoc-3.6.1-1-amd64.deb
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc
+          pandoc --version
+
+      - name: Build the site
+        run: ./build.sh
+
+      - name: Verify committed output matches a fresh build
+        # The repo commits its generated output (topics/, wiki.html,
+        # graph.json, search-index.json, manifest.json). A clean tree here
+        # proves the committed site is exactly what ./build.sh produces —
+        # nobody hand-edited generated files and nobody forgot to rebuild.
+        # `git add -A` first so UNTRACKED generated files (e.g. a brand-new
+        # topics/<slug>.html that was never committed) fail the gate too;
+        # a bare `git diff` only sees tracked files.
+        # (.build/ is gitignored, so the scratch edge list never shows up.)
+        run: |
+          git add -A
+          git diff --cached --exit-code
+
+  # ---------------------------------------------------------------------------
+  # OPTIONAL: GitHub Pages deploy.
+  #
+  # Disabled by default because the repo owner may prefer another host (any
+  # static file server works). To enable:
+  #   1. In the repo settings: Settings -> Pages -> Source = "GitHub Actions".
+  #   2. Uncomment the job below (and nothing else — the build job above
+  #      stays as the gate; deploy only runs when it passes).
+  # ---------------------------------------------------------------------------
+  #
+  # deploy:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     pages: write      # create the Pages deployment
+  #     id-token: write   # OIDC token used by deploy-pages to authenticate
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #   steps:
+  #     - name: Check out the repository (already-built output is committed)
+  #       uses: actions/checkout@v4
+  #
+  #     - name: Package the site as a Pages artifact
+  #       uses: actions/upload-pages-artifact@v3
+  #       with:
+  #         path: .   # the repo root IS the site: index.html, topics/, js/, …
+  #
+  #     - name: Deploy to GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v4

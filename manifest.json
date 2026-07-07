@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "site": "https://denied.systems",
+  "pages": [
+    {
+      "id": "gnss-denied-navigation",
+      "title": "GNSS-Denied Navigation",
+      "summary": "How an autonomous aircraft keeps a usable state estimate when satellite navigation is jammed, spoofed, or simply absent.",
+      "tags": [
+        "navigation",
+        "sensor-fusion"
+      ],
+      "updated": "2026-07-07",
+      "url": "topics/gnss-denied-navigation.html",
+      "words": 355
+    },
+    {
+      "id": "visual-inertial-odometry",
+      "title": "Visual-Inertial Odometry",
+      "summary": "Fusing camera tracking with inertial propagation to hold a drift-bounded pose estimate without any external positioning.",
+      "tags": [
+        "sensor-fusion",
+        "perception"
+      ],
+      "updated": "2026-07-07",
+      "url": "topics/visual-inertial-odometry.html",
+      "words": 315
+    }
+  ]
+}

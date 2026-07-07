@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>autonomy in contested airspace — denied.systems</title>
+  <meta name="description" content="A field guide to drone autonomy in GPS-denied, contested airspace: GNSS-denied navigation, sensor fusion, VIO/SLAM, and EW-resistant guidance.">
+  <meta property="og:title" content="denied.systems — autonomy in contested airspace">
+  <meta property="og:description" content="A field guide to drone autonomy in GPS-denied, contested airspace: GNSS-denied navigation, sensor fusion, VIO/SLAM, and EW-resistant guidance.">
+  <meta property="og:url" content="https://denied.systems/">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230a0d12'/%3E%3Ccircle cx='8' cy='8' r='2.2' fill='%23e0aa54'/%3E%3Ccircle cx='8' cy='8' r='5.5' fill='none' stroke='%23e0aa54' stroke-opacity='.45' stroke-width='1' stroke-dasharray='2 3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-landing">
+
+  <header class="site-head">
+    <a class="brand" href="index.html">denied<span class="brand-tld">.systems</span></a>
+    <nav class="site-nav">
+      <a href="wiki.html">wiki</a>
+      <a href="graph.html">graph</a>
+    </nav>
+  </header>
+
+  <main class="landing">
+
+    <h1 class="site-title">denied.systems</h1>
+    <p class="site-sub">a field guide to drone autonomy where the sky lies: GPS-denied navigation, sensor fusion, and guidance that survives jamming.</p>
+
+    <p class="cta-row">
+      <a class="cta" href="wiki.html">browse the wiki →</a>
+      <a class="cta" href="graph.html">explore the graph →</a>
+    </p>
+
+    <!-- PLACEHOLDER PROSE — everything between here and the closing marker is a
+         narrative stub. Replace it with your own map of the terrain; the links
+         to topics/, wiki.html and graph.html are the parts worth keeping. -->
+
+    <section>
+      <h2>the problem</h2>
+      <p>
+        Most small autonomous aircraft are built on a quiet assumption: that a
+        constellation of satellites will always tell them where they are. In
+        contested airspace that assumption fails first. Jamming removes the
+        signal; spoofing replaces it with a lie, which is worse. An airframe
+        that cannot answer <em>where am I?</em> without outside help is not
+        autonomous — it is remote-controlled by whoever controls the spectrum.
+      </p>
+      <p>
+        This site maps the engineering that removes that assumption: how a
+        vehicle keeps a usable estimate of its own position, velocity, and
+        attitude when every external reference is degraded, denied, or hostile.
+      </p>
+    </section>
+
+    <section>
+      <h2>navigation without the constellation</h2>
+      <p>
+        The core discipline is <a href="topics/gnss-denied-navigation.html">GNSS-denied
+        navigation</a>: flying on what the airframe can sense for itself.
+        Inertial sensors give you dead reckoning that drifts without bound;
+        everything else in the stack exists to fight that drift — terrain and
+        magnetic references, celestial fixes, signals of opportunity, and
+        above all, cameras.
+      </p>
+      <p>
+        The workhorse of the camera-based approach is
+        <a href="topics/visual-inertial-odometry.html">visual-inertial
+        odometry</a>: fusing high-rate IMU integration with visual feature
+        tracks to hold drift to a fraction of a percent of distance travelled,
+        on compute that fits a small airframe's power budget.
+      </p>
+    </section>
+
+    <section>
+      <h2>from estimate to action</h2>
+      <p>
+        A position estimate is only useful if the vehicle can act on it under
+        the same constraints it was made under. Perception-to-control on
+        embedded compute, guidance laws that tolerate noisy state, and mission
+        logic that degrades gracefully instead of failing brittle — these are
+        the downstream halves of the same problem, and later pages will treat
+        them with the same field-guide discipline.
+      </p>
+    </section>
+
+    <section>
+      <h2>how to read this site</h2>
+      <p>
+        Every page here is a node in one connected graph of ideas. Browse the
+        full index in the <a href="wiki.html">wiki view</a>, or see how the
+        topics actually connect in the <a href="graph.html">graph view</a> —
+        pages are nodes, cross-references are edges, and clicking a node opens
+        its page. Start anywhere; the links will carry you.
+      </p>
+    </section>
+
+    <!-- END PLACEHOLDER PROSE -->
+
+  </main>
+
+  <footer class="page-foot">
+    <span>denied.systems — a field guide to autonomy in contested airspace</span>
+    <a href="index.html">← index</a>
+  </footer>
+
+</body>
+</html>
