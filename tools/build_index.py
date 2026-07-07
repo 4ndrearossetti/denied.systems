@@ -328,13 +328,9 @@ def build_wiki_html(pages, site_url):
 <header class="site-head">
   <a class="brand" href="index.html">denied<span class="brand-tld">.systems</span></a>
   <nav class="site-nav">
-    <a href="wiki.html">wiki</a>
+    <a class="active" href="wiki.html">wiki</a>
     <a href="graph.html">graph</a>
   </nav>
-  <div class="view-toggle" role="navigation" aria-label="view">
-    <a class="vt active" href="wiki.html">wiki</a>
-    <a class="vt" href="graph.html">graph</a>
-  </div>
   <div class="search">
     <input id="search-in" type="search" placeholder="search…" autocomplete="off">
     <div id="search-out" class="search-out" hidden></div>

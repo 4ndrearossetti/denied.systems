@@ -132,14 +132,20 @@ Shared header, all pages (hrefs adjusted for depth — topic pages prefix `../`)
 </header>
 ```
 
+Active-link convention: the `.site-nav` link for the current view carries
+`class="active"` — the wiki link on `wiki.html`, the graph link on
+`graph.html`. The landing page and topic pages mark nothing. CSS styles it
+as `.site-nav a.active { color: var(--accent) }` (hover on the other links
+is unaffected). There is no separate view toggle.
+
+`.site-head` renders at a constant height on every page (CSS `min-height`
+≈3.3rem with centered items); the search widget must stay compact enough
+not to grow the row. Wrapped rows on narrow screens may grow — acceptable.
+
 On `wiki.html` and `graph.html` the header additionally contains, after
-`.site-nav` (view toggle marks the current view with `.active`):
+`.site-nav`:
 
 ```html
-<div class="view-toggle" role="navigation" aria-label="view">
-  <a class="vt active" href="wiki.html">wiki</a>
-  <a class="vt" href="graph.html">graph</a>
-</div>
 <div class="search">
   <input id="search-in" type="search" placeholder="search…" autocomplete="off">
   <div id="search-out" class="search-out" hidden></div>

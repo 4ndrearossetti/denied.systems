@@ -61,12 +61,18 @@ a { color: var(--accent); text-decoration: none; }
 
 /* ---- 3. Shared header ----------------------------------------------------- */
 
+/* Constant-height bar on every page: min-height governs (all row content —
+   brand line ≈1.5rem, search input ≈1.9rem outer — stays well under 3.3rem
+   minus the .8rem vertical padding), so pages with and without the search
+   widget render the same header height. Wrapped rows on narrow screens may
+   grow taller — that is expected. */
 .site-head {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: .35rem 1.4rem;
-  padding: .8rem 1.25rem;
+  min-height: 3.3rem;
+  padding: .4rem 1.25rem;
   border-bottom: 1px solid var(--line);
   font-family: var(--mono);
   font-size: .85rem;
@@ -88,34 +94,20 @@ a { color: var(--accent); text-decoration: none; }
 }
 .site-nav a { color: var(--dim); }
 .site-nav a:hover { color: var(--text); }
-
-/* view toggle (wiki.html / graph.html only) */
-.view-toggle {
-  display: inline-flex;
-  border: 1px solid var(--line);
-  border-radius: 5px;
-  overflow: hidden;
-}
-.view-toggle .vt {
-  padding: .3rem .8rem;
-  color: var(--dim);
-  border-left: 1px solid var(--line);
-}
-.view-toggle .vt:first-child { border-left: 0; }
-.view-toggle .vt:hover { color: var(--text); background: var(--surface); }
-.view-toggle .vt.active {
-  color: var(--accent);
-  background: var(--surface-2);
-}
+/* current view (wiki link on wiki.html, graph link on graph.html) — placed
+   after :hover so the active link stays accent-colored under the cursor */
+.site-nav a.active { color: var(--accent); }
 
 /* ---- 4. Search (header widget on wiki + graph) --------------------------- */
 
 .search { position: relative; }
 
+/* compact: outer height ≈ 1em text + 2×.3rem padding + 2×1px border ≈ 1.85rem,
+   which fits inside the 3.3rem .site-head without growing the row */
 #search-in {
   width: 15rem;
   max-width: 100%;
-  padding: .35rem .7rem;
+  padding: .3rem .7rem;
   background: var(--surface);
   color: var(--text);
   border: 1px solid var(--line);
@@ -348,7 +340,13 @@ body.page-landing {
 
 /* ---- 7. Prose furniture: kicker / title / lede / meta / tags -------------- */
 
-.kicker {
+/* `.landing .kicker` (0,2,0) is grouped in so the accent survives ancestor
+   paragraph color rules like `.landing p` (0,1,1), which outrank a bare
+   `.kicker` (0,1,0). Topic pages (.prose) and wiki (.wiki-index) have no such
+   competing p color rule, but p.kicker (0,1,1) guards them anyway. */
+.kicker,
+p.kicker,
+.landing .kicker {
   margin: 0 0 .6rem;
   font-family: var(--mono);
   font-size: .78rem;

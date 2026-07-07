@@ -3,25 +3,41 @@
  * Exposes window.GraphView = { focusOnNode(id) } per CONTRACT §6.
  * Requires the vendored d3 bundle (js/vendor/d3.js) loaded first.
  * Plain IIFE, no modules. Degrades to a short message if fetch fails.
+ *
+ * Force model & interaction feel ported from the owner's hive-mind
+ * prototype: loose elastic links (d3's default link strength), strong
+ * uncapped charge, a barely-there center force, hot simulation during
+ * drag — nodes stretch apart and snap back like an Obsidian graph.
  */
 (function () {
   'use strict';
 
   /* =====================================================================
-   * FORCE PARAMETERS — baked, no UI sliders. Tuned for ~10–200 nodes.
+   * FORCE PARAMETERS — baked, no UI sliders. Elastic "Obsidian" tuning:
+   *   - link strength is d3's DEFAULT (1 / min(degree of endpoints));
+   *     do NOT set it explicitly — a fixed strength makes the graph rigid.
+   *   - charge has NO distanceMax — long-range repulsion spreads clusters.
+   *   - the center force is ~60x weaker than a typical positioning force,
+   *     so the layout drifts and breathes instead of being pinned.
+   *   - alphaDecay / velocityDecay stay at d3 defaults for the same reason.
    * ===================================================================== */
   var FORCE = {
-    chargeStrength: -250,   // many-body repulsion
-    chargeDistanceMax: 480, // stop repelling beyond this distance
-    linkDistance: 80,       // resting edge length
-    linkStrength: 0.5,      // edge spring stiffness
-    collidePadding: 6,      // extra clearance beyond node radius
-    centerStrength: 0.06,   // pull toward viewport middle (x/y forces)
-    alphaDecay: 0.03,       // settle speed
-    velocityDecay: 0.35     // friction
+    linkDistance: 80,      // resting edge length (strength left at default!)
+    chargeStrength: -250,  // many-body repulsion, uncapped range
+    centerStrength: 0.001, // very weak pull toward the origin
+    collidePadding: 5      // clearance beyond node radius
   };
-  var ZOOM_EXTENT = [0.25, 4]; // min/max zoom scale
-  var LOD_K = 0.9;             // below this zoom, only top-degree labels show
+  var ZOOM_EXTENT = [0.1, 8]; // min/max zoom scale
+  var INITIAL_SCALE = 0.8;    // starting zoom (view centered on origin)
+  var FOCUS_SCALE = 2.8;      // zoom level after focusOnNode
+  /* Label level-of-detail tiers, keyed to zoom k:
+   *   k > LOD_ALL            → every label
+   *   LOD_TOP < k ≤ LOD_ALL  → only top-quartile-degree labels (min 1)
+   *   k ≤ LOD_TOP            → none */
+  var LOD_ALL = 0.7;
+  var LOD_TOP = 0.45;
+  var FADE = { node: 0.12, label: 0.06, link: 0.08 }; // faded opacities
+  var LINK_OPACITY = 0.6; // resting link stroke-opacity
   /* ===================================================================== */
 
   var svgEl = document.getElementById('graph');
@@ -77,7 +93,7 @@
     /* ---- adjacency map, built ONCE before the simulation mutates edges.
      * At this point endpoints are still id strings, but we normalise with
      * the (e.source.id || e.source) pattern so the lookup is safe either
-     * way. NOTE: never `|| target` — always `|| e.target`. ---- */
+     * way. NOTE: never a bare `|| target` — always `|| e.target`. ---- */
     var neighbors = {};
     edges.forEach(function (e) {
       var s = e.source.id || e.source;
@@ -95,6 +111,8 @@
       return { w: Math.max(r.width, 320), h: Math.max(r.height, 320) };
     }
     var size = viewSize();
+    var oldW = size.w;
+    var oldH = size.h;
 
     /* ---- node radius: 4 + 3*sqrt(degree) ---- */
     function radius(d) { return 4 + 3 * Math.sqrt(d.degree || 0); }
@@ -113,6 +131,7 @@
       cssVar('--tag-5', '#a08cb0'), cssVar('--tag-6', '#948b7e')
     ];
     var accent = cssVar('--accent', '#d4643a');
+    var bg = cssVar('--bg', '#070706');
 
     var tagFreq = {};
     nodes.forEach(function (n) {
@@ -149,12 +168,19 @@
       });
     }
 
-    /* ---- label level-of-detail: top quartile by degree ---- */
+    /* ---- label level-of-detail: top quartile by degree (min 1 — the
+     * max-degree node always satisfies degree >= q3) ---- */
     var degrees = nodes.map(function (n) { return n.degree || 0; })
       .sort(function (a, b) { return a - b; });
     var q3 = degrees[Math.min(degrees.length - 1,
       Math.floor(degrees.length * 0.75))];
     function isTopDegree(d) { return (d.degree || 0) >= q3; }
+
+    function lodTier(k) {
+      if (k > LOD_ALL) return 2;
+      if (k > LOD_TOP) return 1;
+      return 0;
+    }
 
     /* ---- svg scaffolding: one zoomable container g, then layers ---- */
     var svg = d3.select(svgEl);
@@ -168,7 +194,8 @@
       .join('line')
       .attr('class', 'graph-link')
       .attr('stroke', cssVar('--line', '#29241e'))
-      .attr('stroke-width', 1);
+      .attr('stroke-width', 1.2)
+      .attr('stroke-opacity', LINK_OPACITY);
 
     var node = nodeLayer.selectAll('circle')
       .data(nodes)
@@ -176,7 +203,7 @@
       .attr('class', 'graph-node')
       .attr('r', radius)
       .attr('fill', nodeColor)
-      .attr('stroke', cssVar('--bg', '#070706'))
+      .attr('stroke', bg)
       .attr('stroke-width', 1.2)
       .style('cursor', 'pointer');
 
@@ -192,23 +219,34 @@
       .attr('pointer-events', 'none')
       .text(function (d) { return d.title; });
 
-    /* ---- simulation (forceX/forceY centering so resize is cheap) ---- */
-    var forceX = d3.forceX(size.w / 2).strength(FORCE.centerStrength);
-    var forceY = d3.forceY(size.h / 2).strength(FORCE.centerStrength);
+    /* ---- interaction state ---- */
+    var focusedNode = null;       // node datum currently focused via search
+    var userHasInteracted = false; // manual zoom/pan since the last focus
+    var currentTier = lodTier(INITIAL_SCALE);
+
+    function labelOpacity(d) {
+      if (currentTier === 2) return 1;
+      if (currentTier === 1) return isTopDegree(d) ? 1 : 0;
+      return 0;
+    }
+    function updateLabels() {
+      if (focusedNode) return; // faded state owns label opacity for now
+      label.transition('lod').duration(250).attr('opacity', labelOpacity);
+    }
+
+    /* ---- simulation: coordinates centered on (0,0), prototype forces ---- */
     var simulation = d3.forceSimulation(nodes)
       .force('link', d3.forceLink(edges)
         .id(function (d) { return d.id; })
-        .distance(FORCE.linkDistance)
-        .strength(FORCE.linkStrength))
+        .distance(FORCE.linkDistance))
+        // no .strength(): d3's default keeps the links elastic
       .force('charge', d3.forceManyBody()
-        .strength(FORCE.chargeStrength)
-        .distanceMax(FORCE.chargeDistanceMax))
+        .strength(FORCE.chargeStrength))
+        // no .distanceMax(): uncapped repulsion spreads the layout
+      .force('center', d3.forceCenter(0, 0)
+        .strength(FORCE.centerStrength))
       .force('collide', d3.forceCollide()
-        .radius(function (d) { return radius(d) + FORCE.collidePadding; }))
-      .force('x', forceX)
-      .force('y', forceY)
-      .alphaDecay(FORCE.alphaDecay)
-      .velocityDecay(FORCE.velocityDecay);
+        .radius(function (d) { return radius(d) + FORCE.collidePadding; }));
 
     /* ---- the ONE tick handler (defined exactly once, never shadowed) ---- */
     function ticked() {
@@ -226,32 +264,124 @@
     }
     simulation.on('tick', ticked);
 
-    /* ---- zoom/pan → transform the container; drive label LOD off k ---- */
-    var currentK = 1;
-    function labelOpacity(d) {
-      return (currentK >= LOD_K || isTopDegree(d)) ? 1 : 0;
-    }
-    function updateLabels() {
-      label.transition('lod').duration(250)
-        .attr('opacity', labelOpacity);
-    }
-    var zoom = d3.zoom()
+    /* ---- zoom/pan: transform the container, drive label LOD off k.
+     * event.sourceEvent distinguishes manual gestures from programmatic
+     * transforms (initial centering, focus transitions): only a manual
+     * gesture after a focus clears the focus state. ---- */
+    var zoomBehavior = d3.zoom()
       .scaleExtent(ZOOM_EXTENT)
       .on('zoom', function (event) {
+        if (event.sourceEvent) userHasInteracted = true;
         container.attr('transform', event.transform);
-        var crossed = (event.transform.k >= LOD_K) !== (currentK >= LOD_K);
-        currentK = event.transform.k;
-        if (crossed) updateLabels();
+        var tier = lodTier(event.transform.k);
+        if (tier !== currentTier) {
+          currentTier = tier;
+          updateLabels();
+        }
+      })
+      .on('end', function (event) {
+        if (focusedNode && userHasInteracted && event.sourceEvent) {
+          clearFocus();
+          userHasInteracted = false;
+        }
       });
-    svg.call(zoom);
-    updateLabels(); // initial state at k = 1: all labels visible
+    svg.call(zoomBehavior);
 
-    /* ---- drag: pin while dragging, release after ---- */
+    // Initial view: simulation space is centered on (0,0), so place the
+    // origin at the viewport middle, slightly zoomed out.
+    function centeredTransform(w, h) {
+      return d3.zoomIdentity.translate(w / 2, h / 2).scale(INITIAL_SCALE);
+    }
+    svg.call(zoomBehavior.transform, centeredTransform(size.w, size.h));
+    label.attr('opacity', labelOpacity); // initial LOD state, no transition
+
+    /* ---- fade helpers (focus + hover share these) ---- */
+    function fadeAround(id, fadeAllLinks) {
+      node.transition('fade').duration(200)
+        .attr('opacity', function (o) {
+          return isNeighbor(id, o.id) ? 1 : FADE.node;
+        });
+      label.transition('fade').duration(200)
+        .attr('opacity', function (o) {
+          return isNeighbor(id, o.id) ? labelOpacity(o) : FADE.label;
+        });
+      link.transition('fade').duration(200)
+        .attr('stroke-opacity', function (e) {
+          if (fadeAllLinks) return FADE.link;
+          var s = e.source.id || e.source;
+          var t = e.target.id || e.target;
+          return (s === id || t === id) ? LINK_OPACITY : FADE.link;
+        });
+    }
+    function unfadeAll() {
+      node.transition('fade').duration(200)
+        .attr('opacity', 1)
+        .attr('stroke', bg)
+        .attr('stroke-width', 1.2);
+      label.transition('fade').duration(200).attr('opacity', labelOpacity);
+      link.transition('fade').duration(200)
+        .attr('stroke-opacity', LINK_OPACITY);
+    }
+
+    function clearFocus() {
+      if (!focusedNode) return;
+      focusedNode = null;
+      unfadeAll();
+    }
+
+    /* ---- hover: fade non-neighbors; inert while something is focused ---- */
+    function clearHover() {
+      if (focusedNode) return;
+      unfadeAll();
+    }
+
+    node
+      .on('mouseover', function (event, d) {
+        if (focusedNode) return;
+        fadeAround(d.id, false);
+      })
+      .on('mouseout', clearHover)
+      .on('click', function (event, d) {
+        // graph.html sits at the site root; node.url is root-relative
+        // ("topics/slug.html"), so it is usable as-is.
+        window.location.href = d.url;
+      });
+
+    // Link hover: fade everything except this link and its two endpoints.
+    link
+      .on('mouseover', function (event, d) {
+        if (focusedNode) return;
+        var s = d.source.id || d.source;
+        var t = d.target.id || d.target;
+        node.transition('fade').duration(200)
+          .attr('opacity', function (o) {
+            return (o.id === s || o.id === t) ? 1 : FADE.node;
+          });
+        label.transition('fade').duration(200)
+          .attr('opacity', function (o) {
+            return (o.id === s || o.id === t) ? labelOpacity(o) : FADE.label;
+          });
+        link.transition('fade').duration(200)
+          .attr('stroke-opacity', function (e) {
+            return e === d ? LINK_OPACITY : FADE.link;
+          });
+      })
+      .on('mouseout', clearHover);
+
+    svg.on('mouseleave', clearHover);
+
+    /* ---- drag: keep the simulation hot so neighbors follow elastically;
+     * release the node on end so it springs back into the layout. A drag
+     * is a manual interaction, so it also clears any focus state. ---- */
     node.call(d3.drag()
       .on('start', function (event, d) {
         if (!event.active) simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
         d.fy = d.y;
+        if (focusedNode) {
+          clearFocus();
+          userHasInteracted = false;
+        }
       })
       .on('drag', function (event, d) {
         d.fx = event.x;
@@ -263,76 +393,55 @@
         d.fy = null;
       }));
 
-    /* ---- hover: fade non-neighbors and non-incident links ---- */
-    node
-      .on('mouseover', function (event, d) {
-        node.transition('fade').duration(150)
-          .attr('opacity', function (o) {
-            return isNeighbor(d.id, o.id) ? 1 : 0.12;
-          });
-        label.transition('fade').duration(150)
-          .attr('opacity', function (o) {
-            return isNeighbor(d.id, o.id) ? labelOpacity(o) : 0.06;
-          });
-        link.transition('fade').duration(150)
-          .attr('stroke-opacity', function (e) {
-            var s = e.source.id || e.source;
-            var t = e.target.id || e.target;
-            return (s === d.id || t === d.id) ? 1 : 0.08;
-          });
-      })
-      .on('mouseout', function () {
-        node.transition('fade').duration(200).attr('opacity', 1);
-        label.transition('fade').duration(200).attr('opacity', labelOpacity);
-        link.transition('fade').duration(200).attr('stroke-opacity', 0.6);
-      })
-      .on('click', function (event, d) {
-        // graph.html sits at the site root; node.url is root-relative
-        // ("topics/slug.html"), so it is usable as-is.
-        window.location.href = d.url;
-      });
-
-    link.attr('stroke-opacity', 0.6);
-
-    /* ---- animated focus-on-node (used by search selection) ---- */
+    /* ---- animated focus-on-node (used by search selection): mark the
+     * node with an accent ring, fade non-neighbors and all links, then
+     * glide to it (translate ~1000ms, zoom in ~800ms). The programmatic
+     * transitions carry no sourceEvent, so they never clear the focus;
+     * the next manual pan/zoom or node drag does. ---- */
     focusImpl = function (id) {
       var target = null;
       for (var i = 0; i < nodes.length; i++) {
         if (nodes[i].id === id) { target = nodes[i]; break; }
       }
       if (!target) return false; // caller (search.js) falls back to navigation
-      var s = viewSize();
-      var k = 1.6;
-      var t = d3.zoomIdentity
-        .translate(s.w / 2, s.h / 2)
-        .scale(k)
-        .translate(-target.x, -target.y);
-      svg.transition('focus').duration(700).call(zoom.transform, t)
-        .on('end', pulse);
-      function pulse() {
-        var ring = container.append('circle')
-          .attr('class', 'focus-pulse')
-          .attr('cx', target.x)
-          .attr('cy', target.y)
-          .attr('r', radius(target) + 2)
-          .attr('fill', 'none')
-          .attr('stroke', accent)
-          .attr('stroke-width', 2)
-          .attr('opacity', 0.9);
-        ring.transition('pulse').duration(650)
-          .attr('r', radius(target) + 26)
-          .attr('opacity', 0)
-          .remove();
-      }
+
+      clearFocus();
+      focusedNode = target;
+      userHasInteracted = false;
+      fadeAround(target.id, true); // all links fade in focus mode
+      node.transition('ring').duration(200)
+        .attr('stroke', function (o) {
+          return o.id === target.id ? accent : bg;
+        })
+        .attr('stroke-width', function (o) {
+          return o.id === target.id ? 2 : 1.2;
+        });
+
+      svg.transition('focus')
+        .duration(1000)
+        .call(zoomBehavior.translateTo, target.x, target.y)
+        .transition()
+        .duration(800)
+        .call(zoomBehavior.scaleTo, FOCUS_SCALE);
       return true; // focused successfully
     };
 
-    /* ---- resize: recenter the x/y forces on the new viewport middle ---- */
+    /* ---- resize: keep the view centered like the prototype — shift the
+     * current transform by the viewport-center delta; when nothing is
+     * focused, snap back to the standard centered view. ---- */
     window.addEventListener('resize', function () {
       var s = viewSize();
-      forceX.x(s.w / 2);
-      forceY.y(s.h / 2);
-      simulation.alpha(0.3).restart();
+      if (focusedNode) {
+        var cur = d3.zoomTransform(svgEl);
+        // ZoomTransform.translate works in pre-scale units, hence / cur.k.
+        svg.call(zoomBehavior.transform, cur.translate(
+          (s.w - oldW) / 2 / cur.k,
+          (s.h - oldH) / 2 / cur.k));
+      } else {
+        svg.call(zoomBehavior.transform, centeredTransform(s.w, s.h));
+      }
+      oldW = s.w;
+      oldH = s.h;
     });
   }
 })();
