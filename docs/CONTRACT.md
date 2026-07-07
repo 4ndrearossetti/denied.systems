@@ -114,7 +114,7 @@ Every page includes in `<head>`: `charset`, `viewport`, `<title>… — denied.s
 the stylesheet (`style.css`, path-relative), and this favicon line verbatim:
 
 ```html
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230a0d12'/%3E%3Ccircle cx='8' cy='8' r='2.2' fill='%23e0aa54'/%3E%3Ccircle cx='8' cy='8' r='5.5' fill='none' stroke='%23e0aa54' stroke-opacity='.45' stroke-width='1' stroke-dasharray='2 3'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23070706'/%3E%3Ccircle cx='8' cy='8' r='2.2' fill='%23d4643a'/%3E%3Ccircle cx='8' cy='8' r='5.5' fill='none' stroke='%23d4643a' stroke-opacity='.45' stroke-width='1' stroke-dasharray='2 3'/%3E%3C/svg%3E">
 ```
 
 (The `xmlns` URL is a namespace identifier inside a data: URI, not a network
@@ -258,26 +258,29 @@ current page `.current`, include a small client-side filter input
 ## 7. Design tokens (defined once in style.css as CSS custom properties)
 
 ```css
---bg: #0a0d12;        /* page background            */
---surface: #0f141b;   /* panels, code blocks        */
---surface-2: #151c26; /* hover, inline code         */
---line: #1e2836;      /* hairline borders           */
---text: #c8d2de;      /* body text                  */
---dim: #8494a7;       /* secondary text             */
---faint: #5c6b7d;     /* metadata, hints            */
---accent: #e0aa54;    /* links, focus, brand mark   */
---accent-2: #6fb3c8;  /* secondary accent           */
+--bg: #070706;        /* page background — true warm black   */
+--surface: #0d0c0a;   /* panels, code blocks                 */
+--surface-2: #15120e; /* hover, inline code                  */
+--line: #29241e;      /* hairline borders, warm              */
+--text: #d6cfc4;      /* body text, warm gray                */
+--dim: #948b7e;       /* secondary text                      */
+--faint: #5f584e;     /* metadata, hints                     */
+--accent: #d4643a;    /* burnt signal orange — links, brand  */
+--accent-hi: #e58753; /* lighter orange — hovers, code kw    */
+--accent-2: #8296ad;  /* cool steel counterpoint             */
 /* tag palette, in assignment order: */
---tag-1: #d9a55a;  --tag-2: #6fb3c8;  --tag-3: #8fae8b;
---tag-4: #a48fb8;  --tag-5: #c9826b;  --tag-6: #7f96b8;
---mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
---sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+--tag-1: #d4643a;  --tag-2: #8296ad;  --tag-3: #96ad82;
+--tag-4: #c8a565;  --tag-5: #a08cb0;  --tag-6: #948b7e;
+--mono: "JetBrains Mono", ui-monospace, "Cascadia Code", SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace;
+--sans: var(--mono);  /* the whole site is monospace by design */
 ```
 
-Identity: dark graphite, amber accent, monospace for chrome/headings/kickers,
-sans for body prose, hairline borders, dense-but-legible (prose measure
-~46rem, 16–17px, line-height ~1.65). Mobile: sidebar collapses below ~900px,
-graph remains usable.
+Identity: true warm black, burnt signal orange accent, **all-monospace**
+(chrome, headings, and body prose — one voice), warm hairline borders,
+`//`-prefixed kickers, a faint blueprint grid behind the landing hero and
+the graph view, dense-but-legible (prose measure ~42rem, ~15.5px,
+line-height ~1.7). Mobile: sidebar collapses below ~900px, graph remains
+usable.
 
 `style.css` must style: all §5 markup, pandoc prose output (h2–h4, tables,
 blockquotes, figures), **MathML** (`math` display and inline), and pandoc's

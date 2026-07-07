@@ -7,20 +7,24 @@
 /* ---- 1. Tokens (CONTRACT §7) -------------------------------------------- */
 
 :root {
-  --bg: #0a0d12;        /* page background            */
-  --surface: #0f141b;   /* panels, code blocks        */
-  --surface-2: #151c26; /* hover, inline code         */
-  --line: #1e2836;      /* hairline borders           */
-  --text: #c8d2de;      /* body text                  */
-  --dim: #8494a7;       /* secondary text             */
-  --faint: #5c6b7d;     /* metadata, hints            */
-  --accent: #e0aa54;    /* links, focus, brand mark   */
-  --accent-2: #6fb3c8;  /* secondary accent           */
+  --bg: #070706;        /* page background — true warm black   */
+  --surface: #0d0c0a;   /* panels, code blocks                 */
+  --surface-2: #15120e; /* hover, inline code                  */
+  --line: #29241e;      /* hairline borders, warm              */
+  --text: #d6cfc4;      /* body text, warm gray                */
+  --dim: #948b7e;       /* secondary text                      */
+  --faint: #5f584e;     /* metadata, hints                     */
+  --accent: #d4643a;    /* burnt signal orange — links, brand  */
+  --accent-hi: #e58753; /* lighter orange — hovers, code kw    */
+  --accent-2: #8296ad;  /* cool steel counterpoint             */
   /* tag palette, in assignment order: */
-  --tag-1: #d9a55a;  --tag-2: #6fb3c8;  --tag-3: #8fae8b;
-  --tag-4: #a48fb8;  --tag-5: #c9826b;  --tag-6: #7f96b8;
-  --mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --tag-1: #d4643a;  --tag-2: #8296ad;  --tag-3: #96ad82;
+  --tag-4: #c8a565;  --tag-5: #a08cb0;  --tag-6: #948b7e;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  --sans: var(--mono);  /* the whole site speaks monospace */
+  /* faint blueprint grid, used behind the landing hero and the graph */
+  --grid: linear-gradient(rgba(214, 207, 196, .035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(214, 207, 196, .035) 1px, transparent 1px);
 }
 
 /* ---- 2. Reset / base ----------------------------------------------------- */
@@ -37,8 +41,8 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
-  font-size: 16.5px;
-  line-height: 1.65;
+  font-size: 15.5px;   /* mono runs wide — slightly smaller, taller leading */
+  line-height: 1.7;
 }
 
 [hidden] { display: none !important; }
@@ -53,7 +57,7 @@ a { color: var(--accent); text-decoration: none; }
   border-radius: 2px;
 }
 
-::selection { background: rgba(224, 170, 84, .25); }
+::selection { background: rgba(212, 100, 58, .3); }
 
 /* ---- 3. Shared header ----------------------------------------------------- */
 
@@ -74,7 +78,7 @@ a { color: var(--accent); text-decoration: none; }
   letter-spacing: .01em;
   white-space: nowrap;
 }
-.brand:hover { color: var(--accent); }
+.brand:hover { color: var(--accent-hi); }
 .brand-tld { color: var(--accent); font-weight: 400; }
 
 .site-nav {
@@ -185,11 +189,20 @@ a { color: var(--accent); text-decoration: none; }
 
 /* ---- 5. Landing page ------------------------------------------------------ */
 
-.landing {
-  max-width: 46rem;
-  margin: 0 auto;
-  padding: 3.5rem 1.25rem 5rem;
+/* faint blueprint grid behind the whole landing page */
+body.page-landing {
+  background-image: var(--grid);
+  background-size: 52px 52px;
 }
+
+.landing {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 4.5rem 1.25rem 5rem;
+}
+
+/* hero kicker: "// gnss-denied / sensor fusion / …" */
+.landing > .kicker { margin-bottom: 1rem; }
 
 .site-title {
   margin: 0;
@@ -200,13 +213,16 @@ a { color: var(--accent); text-decoration: none; }
   line-height: 1.15;
   color: var(--text);
 }
+/* the terminal dot, same gesture as the brand mark */
+.site-title .dot { color: var(--accent); }
 
 .site-sub {
-  margin: .8rem 0 0;
+  margin: 1rem 0 0;
   font-family: var(--mono);
   font-size: .95rem;
+  line-height: 1.75;
   color: var(--dim);
-  max-width: 38rem;
+  max-width: 36rem;
 }
 
 .cta-row {
@@ -245,7 +261,7 @@ a { color: var(--accent); text-decoration: none; }
 }
 
 .landing p { color: var(--text); }
-.landing a { border-bottom: 1px solid rgba(224, 170, 84, .35); }
+.landing a { border-bottom: 1px solid rgba(212, 100, 58, .45); }
 .landing a:hover { border-bottom-color: var(--accent); }
 
 /* ---- 6. Topic page layout ------------------------------------------------- */
@@ -327,7 +343,7 @@ a { color: var(--accent); text-decoration: none; }
 .prose {
   flex: 1 1 auto;
   min-width: 0;
-  max-width: 46rem;
+  max-width: 42rem;
 }
 
 /* ---- 7. Prose furniture: kicker / title / lede / meta / tags -------------- */
@@ -335,12 +351,13 @@ a { color: var(--accent); text-decoration: none; }
 .kicker {
   margin: 0 0 .6rem;
   font-family: var(--mono);
-  font-size: .72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .14em;
+  font-size: .78rem;
+  font-weight: 500;
+  text-transform: lowercase;
+  letter-spacing: .06em;
   color: var(--accent);
 }
+.kicker::before { content: "// "; color: var(--accent); }
 
 .page-title {
   margin: 0 0 .6rem;
@@ -426,7 +443,7 @@ a { color: var(--accent); text-decoration: none; }
 .prose p { margin: 0 0 1.1rem; }
 
 .prose a {
-  border-bottom: 1px solid rgba(224, 170, 84, .35);
+  border-bottom: 1px solid rgba(212, 100, 58, .45);
 }
 .prose a:hover { border-bottom-color: var(--accent); }
 
@@ -495,7 +512,7 @@ a { color: var(--accent); text-decoration: none; }
 
 /* wikilinks (from filters/wikilinks.lua) */
 a.wikilink {
-  border-bottom: 1px solid rgba(224, 170, 84, .35);
+  border-bottom: 1px solid rgba(212, 100, 58, .45);
 }
 a.wikilink:hover { border-bottom-color: var(--accent); }
 .wikilink.broken {
@@ -565,15 +582,15 @@ pre.numberSource code > span > a:first-child::before {
 pre.numberSource code > span { counter-increment: source-line; }
 pre.numberSource code { counter-reset: source-line 0; }
 
-/* token scheme — dark, harmonious with §7 (amber keywords, sage strings,
-   cyan types, muted italic comments) */
-code span.kw { color: var(--tag-1); }                     /* keyword        */
-code span.cf { color: var(--tag-1); font-weight: 600; }   /* control flow   */
-code span.im { color: var(--tag-1); font-style: italic; } /* import         */
+/* token scheme — dark, harmonious with §7 (signal-orange keywords, sage
+   strings, steel types, muted italic comments) */
+code span.kw { color: var(--accent-hi); }                     /* keyword    */
+code span.cf { color: var(--accent-hi); font-weight: 600; }   /* ctrl flow  */
+code span.im { color: var(--accent-hi); font-style: italic; } /* import     */
 code span.dt { color: var(--accent-2); }                  /* data type      */
-code span.dv { color: var(--tag-5); }                     /* decimal value  */
-code span.bn { color: var(--tag-5); }                     /* base-N value   */
-code span.fl { color: var(--tag-5); }                     /* float          */
+code span.dv { color: var(--tag-4); }                     /* decimal value  */
+code span.bn { color: var(--tag-4); }                     /* base-N value   */
+code span.fl { color: var(--tag-4); }                     /* float          */
 code span.st { color: var(--tag-3); }                     /* string         */
 code span.sc { color: var(--tag-3); font-weight: 600; }   /* special char   */
 code span.ss { color: var(--tag-3); font-style: italic; } /* special string */
@@ -584,18 +601,18 @@ code span.do { color: var(--faint); font-style: italic; }  /* doc      */
 code span.an { color: var(--faint); font-style: italic; font-weight: 600; } /* annotation */
 code span.cv { color: var(--faint); font-style: italic; }  /* commentVar */
 code span.in { color: var(--faint); font-style: italic; }  /* information */
-code span.fu { color: var(--tag-4); }                     /* function       */
+code span.fu { color: var(--tag-5); }                     /* function       */
 code span.op { color: var(--dim); }                       /* operator       */
 code span.va { color: var(--text); }                      /* variable       */
 code span.at { color: var(--tag-6); }                     /* attribute      */
 code span.ot { color: var(--tag-6); }                     /* other          */
-code span.pp { color: var(--tag-5); font-style: italic; } /* preprocessor   */
-code span.cn { color: var(--tag-5); }                     /* constant       */
+code span.pp { color: var(--tag-4); font-style: italic; } /* preprocessor   */
+code span.cn { color: var(--tag-4); }                     /* constant       */
 code span.bu { color: var(--accent-2); }                  /* builtin        */
 code span.ex { color: var(--accent-2); }                  /* extension      */
-code span.al { color: var(--tag-5); font-weight: 600; }   /* alert          */
-code span.er { color: var(--tag-5); text-decoration: underline wavy; } /* error */
-code span.wa { color: var(--tag-1); font-style: italic; } /* warning        */
+code span.al { color: var(--accent); font-weight: 600; }   /* alert         */
+code span.er { color: var(--accent); text-decoration: underline wavy; } /* error */
+code span.wa { color: var(--accent-hi); font-style: italic; } /* warning    */
 
 /* ---- 10. Math (native MathML via pandoc --mathml) --------------------------- */
 
@@ -700,6 +717,8 @@ body.page-graph .site-head { flex: none; }
      inside the flex column this is just the basis and flexes to fit */
   height: calc(100dvh - 4rem);
   background: var(--bg);
+  background-image: var(--grid);
+  background-size: 52px 52px;
 }
 
 svg#graph {
@@ -729,7 +748,7 @@ svg#graph:active { cursor: grabbing; }
   flex-direction: column;
   gap: .25rem;
   padding: .6rem .8rem;
-  background: rgba(15, 20, 27, .88);
+  background: rgba(13, 12, 10, .9);
   border: 1px solid var(--line);
   border-radius: 6px;
   font-family: var(--mono);

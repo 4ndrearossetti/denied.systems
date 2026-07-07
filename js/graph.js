@@ -108,11 +108,11 @@
       return v || fallback;
     }
     var palette = [
-      cssVar('--tag-1', '#d9a55a'), cssVar('--tag-2', '#6fb3c8'),
-      cssVar('--tag-3', '#8fae8b'), cssVar('--tag-4', '#a48fb8'),
-      cssVar('--tag-5', '#c9826b'), cssVar('--tag-6', '#7f96b8')
+      cssVar('--tag-1', '#d4643a'), cssVar('--tag-2', '#8296ad'),
+      cssVar('--tag-3', '#96ad82'), cssVar('--tag-4', '#c8a565'),
+      cssVar('--tag-5', '#a08cb0'), cssVar('--tag-6', '#948b7e')
     ];
-    var accent = cssVar('--accent', '#e0aa54');
+    var accent = cssVar('--accent', '#d4643a');
 
     var tagFreq = {};
     nodes.forEach(function (n) {
@@ -167,7 +167,7 @@
       .data(edges)
       .join('line')
       .attr('class', 'graph-link')
-      .attr('stroke', cssVar('--line', '#1e2836'))
+      .attr('stroke', cssVar('--line', '#29241e'))
       .attr('stroke-width', 1);
 
     var node = nodeLayer.selectAll('circle')
@@ -176,7 +176,7 @@
       .attr('class', 'graph-node')
       .attr('r', radius)
       .attr('fill', nodeColor)
-      .attr('stroke', cssVar('--bg', '#0a0d12'))
+      .attr('stroke', cssVar('--bg', '#070706'))
       .attr('stroke-width', 1.2)
       .style('cursor', 'pointer');
 
@@ -187,7 +187,7 @@
       .join('text')
       .attr('class', 'graph-label')
       .attr('text-anchor', 'middle')
-      .attr('fill', cssVar('--dim', '#8494a7'))
+      .attr('fill', cssVar('--dim', '#948b7e'))
       .attr('font-size', 11)
       .attr('pointer-events', 'none')
       .text(function (d) { return d.title; });
