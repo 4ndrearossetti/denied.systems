@@ -351,6 +351,7 @@ def build_wiki_html(pages, site_url):
 <script src="js/app.js"></script>
 <script src="js/search.js"></script>
 <script>SiteSearch.boot('wiki')</script>
+<script src="js/nav.js"></script>
 </body>
 </html>
 """
