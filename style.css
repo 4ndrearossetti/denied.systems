@@ -884,6 +884,10 @@ svg#graph:active { cursor: grabbing; }
   .sidebar { display: none; }           /* sidebar collapses out of the column… */
   .prose { max-width: 46rem; margin: 0 auto; }
 
+  /* tighter column gap on mobile so the hamburger sits close to the brand
+     (the wiki/graph links are pushed right by .site-nav's margin-left:auto) */
+  .site-head { gap: .35rem .55rem; }
+
   /* hamburger, left of the brand */
   .nav-toggle {
     order: -1;                           /* precede the brand regardless of DOM order */
@@ -891,9 +895,9 @@ svg#graph:active { cursor: grabbing; }
     flex-direction: column;
     justify-content: center;
     gap: 4px;
-    width: 1.9rem;
+    width: 1.55rem;
     height: 1.9rem;
-    margin: 0 .3rem 0 -.35rem;
+    margin: 0;
     padding: 0;
     background: none;
     border: 0;
@@ -967,11 +971,14 @@ svg#graph:active { cursor: grabbing; }
     top: auto;
     overflow: visible;
   }
+  /* when the drawer already has the full search box, the sidebar's own
+     "filter pages…" input is redundant — hide it. On topic pages there is no
+     .search in the drawer, so the filter (their only search) stays. */
+  .drawer .search ~ .sidebar .sidebar-filter { display: none; }
 }
 
 @media (max-width: 640px) {
   body { font-size: 16px; }
-  .site-head { gap: .5rem .9rem; }
   .landing { padding-top: 2.25rem; }
   /* the gesture hint names desktop actions (scroll/drag/click) and wrapped
      onto the legend on phones — drop it on touch-width screens; the legend
