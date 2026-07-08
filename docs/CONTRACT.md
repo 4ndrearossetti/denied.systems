@@ -296,7 +296,10 @@ entirely (teardown) so search falls back to navigation.
 `js/app.js` (topic pages and wiki.html): fetch `search-index.json` (prefix `../` on topic pages), render the sidebar
 `#sidebar` as tag-grouped links (same grouping as wiki.html), mark the
 current page `.current`, include a small client-side filter input
-`input.sidebar-filter`. On fetch failure: leave sidebar empty (CSS collapses it).
+`input.sidebar-filter`. The `.sidebar` reserves its width in CSS while
+empty (so the async fill does not shift the article on load); on fetch
+failure or an empty index, app.js sets the `hidden` attribute to collapse
+that reserved column.
 
 ## 7. Design tokens (defined once in style.css as CSS custom properties)
 

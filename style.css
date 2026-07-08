@@ -85,7 +85,7 @@ a { color: var(--accent); text-decoration: none; }
   letter-spacing: .01em;
   white-space: nowrap;
 }
-.brand:hover { color: var(--accent-hi); }
+.brand:hover { color: var(--text); }  /* brand text never shifts color; only .brand-tld is orange */
 .brand-tld { color: var(--accent); font-weight: 400; }
 
 .site-nav {
@@ -280,7 +280,12 @@ body.page-landing {
   font-size: .8rem;
   scrollbar-width: thin;
 }
-.sidebar:empty { display: none; }
+/* The sidebar reserves its width while empty so its async JS fill does not
+   shift the article rightward on load (that was a visible flash). js/app.js
+   sets the `hidden` attribute if the fetch fails or returns nothing, which
+   collapses it. Deliberate trade: with JS fully disabled the fill never
+   happens and an empty gutter remains — acceptable, the article is still
+   fully readable and the far more common enhanced path no longer jumps. */
 
 .sidebar input.sidebar-filter {
   width: 100%;

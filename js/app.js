@@ -24,8 +24,9 @@
     })
     .then(function (pages) {
       if (Array.isArray(pages) && pages.length) render(pages);
+      else sidebar.hidden = true;   // nothing to show — collapse the reserved column
     })
-    .catch(function () { /* silent no-op */ });
+    .catch(function () { sidebar.hidden = true; }); // fetch failed — collapse it
 
   function currentSlug() {
     // location.pathname ends with "/topics/<slug>.html" (or the bare file
