@@ -19,6 +19,14 @@ updated: 2026-07-07
     group and the graph node color). Keep values on one line; quotes are
     optional for values without special characters.
 
+  * `title` and `summary` are PLAIN TEXT: no raw HTML, no `<` character, and
+    never the sequence `</` — they are interpolated unescaped into the page
+    <head> and h1 (a literal `</title>` breaks the whole head), but entity-
+    escaped on wiki.html, so markup would render on one view and not the
+    other. `&`, `>` and unicode are fine. Also note: pandoc smart-quotes
+    topic pages while wiki.html keeps your typed punctuation — type the exact
+    quotes/dashes you want (e.g. ’ “ ”) if the two views must match.
+
   * Do NOT start the body with an `# h1` — the template renders the title.
     Your first heading is a `##`, like the sections below.
 

@@ -221,6 +221,8 @@
 
     /* ---- interaction state ---- */
     var focusedNode = null;       // node datum currently focused via search
+    var hoverNodeId = null;       // node id currently hovered (null if none)
+    var hoverLink = null;         // edge datum currently hovered (null if none)
     var userHasInteracted = false; // manual zoom/pan since the last focus
     var currentTier = lodTier(INITIAL_SCALE);
 
@@ -229,9 +231,29 @@
       if (currentTier === 1) return isTopDegree(d) ? 1 : 0;
       return 0;
     }
+    /* One function decides every label's opacity from the full interaction
+     * state (focus > link hover > node hover > plain LOD), and one named
+     * transition channel ('label-fade') applies it everywhere — so LOD tier
+     * changes and focus/hover fades can never fight over the attribute or
+     * freeze each other out. Highlighted labels always follow the CURRENT
+     * tier; de-emphasised ones sit at FADE.label. */
+    function labelTargetOpacity(o) {
+      if (focusedNode) {
+        return isNeighbor(focusedNode.id, o.id) ? labelOpacity(o) : FADE.label;
+      }
+      if (hoverLink) {
+        var s = hoverLink.source.id || hoverLink.source;
+        var t = hoverLink.target.id || hoverLink.target;
+        return (o.id === s || o.id === t) ? labelOpacity(o) : FADE.label;
+      }
+      if (hoverNodeId !== null) {
+        return isNeighbor(hoverNodeId, o.id) ? labelOpacity(o) : FADE.label;
+      }
+      return labelOpacity(o);
+    }
     function updateLabels() {
-      if (focusedNode) return; // faded state owns label opacity for now
-      label.transition('lod').duration(250).attr('opacity', labelOpacity);
+      label.transition('label-fade').duration(200)
+        .attr('opacity', labelTargetOpacity);
     }
 
     /* ---- simulation: coordinates centered on (0,0), prototype forces ---- */
@@ -293,52 +315,70 @@
       return d3.zoomIdentity.translate(w / 2, h / 2).scale(INITIAL_SCALE);
     }
     svg.call(zoomBehavior.transform, centeredTransform(size.w, size.h));
-    label.attr('opacity', labelOpacity); // initial LOD state, no transition
+    label.attr('opacity', labelTargetOpacity); // initial LOD state, no transition
 
-    /* ---- fade helpers (focus + hover share these) ---- */
-    function fadeAround(id, fadeAllLinks) {
-      node.transition('fade').duration(200)
-        .attr('opacity', function (o) {
-          return isNeighbor(id, o.id) ? 1 : FADE.node;
-        });
-      label.transition('fade').duration(200)
-        .attr('opacity', function (o) {
-          return isNeighbor(id, o.id) ? labelOpacity(o) : FADE.label;
-        });
-      link.transition('fade').duration(200)
-        .attr('stroke-opacity', function (e) {
-          if (fadeAllLinks) return FADE.link;
-          var s = e.source.id || e.source;
-          var t = e.target.id || e.target;
-          return (s === id || t === id) ? LINK_OPACITY : FADE.link;
-        });
+    /* ---- fade: circles and links derive their opacity from the SAME
+     * interaction state and priority chain as labels (focus > link hover >
+     * node hover > plain), so the three channels can never disagree — e.g.
+     * clearing a focus while the pointer still rests on a node lands in
+     * the full hover state everywhere, not a mix. Callers set the
+     * interaction state first, then call updateFade(). ---- */
+    function nodeTargetOpacity(o) {
+      if (focusedNode) {
+        return isNeighbor(focusedNode.id, o.id) ? 1 : FADE.node;
+      }
+      if (hoverLink) {
+        var s = hoverLink.source.id || hoverLink.source;
+        var t = hoverLink.target.id || hoverLink.target;
+        return (o.id === s || o.id === t) ? 1 : FADE.node;
+      }
+      if (hoverNodeId !== null) {
+        return isNeighbor(hoverNodeId, o.id) ? 1 : FADE.node;
+      }
+      return 1;
     }
-    function unfadeAll() {
+    function linkTargetOpacity(e) {
+      if (focusedNode) return FADE.link; // all links fade in focus mode
+      if (hoverLink) return e === hoverLink ? LINK_OPACITY : FADE.link;
+      if (hoverNodeId !== null) {
+        var s = e.source.id || e.source;
+        var t = e.target.id || e.target;
+        return (s === hoverNodeId || t === hoverNodeId)
+          ? LINK_OPACITY : FADE.link;
+      }
+      return LINK_OPACITY;
+    }
+    function updateFade() {
       node.transition('fade').duration(200)
-        .attr('opacity', 1)
-        .attr('stroke', bg)
-        .attr('stroke-width', 1.2);
-      label.transition('fade').duration(200).attr('opacity', labelOpacity);
+        .attr('opacity', nodeTargetOpacity);
       link.transition('fade').duration(200)
-        .attr('stroke-opacity', LINK_OPACITY);
+        .attr('stroke-opacity', linkTargetOpacity);
+      updateLabels();
     }
 
     function clearFocus() {
       if (!focusedNode) return;
       focusedNode = null;
-      unfadeAll();
+      node.transition('ring').duration(200) // remove the accent ring
+        .attr('stroke', bg)
+        .attr('stroke-width', 1.2);
+      updateFade();
     }
 
     /* ---- hover: fade non-neighbors; inert while something is focused ---- */
     function clearHover() {
-      if (focusedNode) return;
-      unfadeAll();
+      hoverNodeId = null;
+      hoverLink = null;
+      if (focusedNode) return; // focus dominates every channel — no repaint
+      updateFade();
     }
 
     node
       .on('mouseover', function (event, d) {
         if (focusedNode) return;
-        fadeAround(d.id, false);
+        hoverNodeId = d.id;
+        hoverLink = null;
+        updateFade();
       })
       .on('mouseout', clearHover)
       .on('click', function (event, d) {
@@ -351,20 +391,9 @@
     link
       .on('mouseover', function (event, d) {
         if (focusedNode) return;
-        var s = d.source.id || d.source;
-        var t = d.target.id || d.target;
-        node.transition('fade').duration(200)
-          .attr('opacity', function (o) {
-            return (o.id === s || o.id === t) ? 1 : FADE.node;
-          });
-        label.transition('fade').duration(200)
-          .attr('opacity', function (o) {
-            return (o.id === s || o.id === t) ? labelOpacity(o) : FADE.label;
-          });
-        link.transition('fade').duration(200)
-          .attr('stroke-opacity', function (e) {
-            return e === d ? LINK_OPACITY : FADE.link;
-          });
+        hoverLink = d;
+        hoverNodeId = null;
+        updateFade();
       })
       .on('mouseout', clearHover);
 
@@ -408,7 +437,7 @@
       clearFocus();
       focusedNode = target;
       userHasInteracted = false;
-      fadeAround(target.id, true); // all links fade in focus mode
+      updateFade(); // focus branch: fades non-neighbors and ALL links
       node.transition('ring').duration(200)
         .attr('stroke', function (o) {
           return o.id === target.id ? accent : bg;

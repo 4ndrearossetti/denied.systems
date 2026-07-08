@@ -52,6 +52,17 @@ updated: 2026-07-07
 ---
 ```
 
+- `title` and `summary` are plain text — no raw HTML, no `<` character, and
+  never the sequence `</`. Rationale: pandoc interpolates them unescaped into
+  `<title>`, the `meta description`/`og:`/`twitter:` `content` attributes and
+  the `h1.page-title` (frontmatter is parsed as markdown, so inline HTML
+  passes through verbatim), while `tools/build_index.py` entity-escapes the
+  same strings for `wiki.html` — markup would render live on the topic page
+  and inert on the wiki, and a literal `</title>` would break the whole
+  `<head>`. `&`, `>` and unicode are fine (both emitters handle them). Also
+  note pandoc smart-typography applies to topic pages only: straight quotes
+  in a title render curly there but straight on `wiki.html` — type the exact
+  punctuation you want (e.g. `’` `“` `”`) if the two views must match.
 - Body must NOT start with an `# h1` — the template renders the title.
   Sections start at `##`.
 - Wikilinks: `[[target-slug]]` or `[[target-slug|display text]]`. Target is the
@@ -250,14 +261,37 @@ window.SiteSearch = {
 ```js
 window.GraphView = { focusOnNode(id) }  // animated zoom/center on node by slug
 ```
-Behavior (fixed, no UI sliders): zoom/pan (d3-zoom), node drag (d3-drag),
-hover fades non-neighbors (adjacency built with the
-`e.source.id || e.source` pattern), click navigates to `node.url`, node
-radius `4 + 3*sqrt(degree)`, color = primary tag via the tag palette (§7,
-assigned to tags sorted by frequency then name; wraps if >6), label
-level-of-detail keyed to zoom `k` (below `k≈0.9` only top-degree labels
-visible, above all labels; smooth opacity). Legend of tag→color in
-`#graph-legend`. Force params baked in one clearly-marked const block.
+Behavior (fixed, no UI sliders): zoom/pan (d3-zoom, scale extent [0.1, 8]),
+node drag (d3-drag) that keeps the simulation hot (alphaTarget 0.3 while
+dragging, node position released on end) so neighbors follow elastically,
+click navigates to `node.url`, node radius `4 + 3*sqrt(degree)`, color =
+primary tag via the tag palette (§7, assigned to tags sorted by frequency
+then name; wraps if >6). Force model (elastic, Obsidian-like, ported from
+the owner's hive-mind prototype): link distance ~80 at d3's DEFAULT link
+strength (no explicit strength), charge ~-250 with no distanceMax, a very
+weak `d3.forceCenter(0,0)` (strength ~0.001), collide radius = node radius
++ 5; simulation coordinates centered on (0,0) with the initial view set
+programmatically to `translate(w/2,h/2).scale(0.8)` and recentered on
+resize. Hovering a node fades non-neighbors and non-incident links
+(adjacency built with the `e.source.id || e.source` pattern on BOTH
+endpoints — never a bare `|| target`); hovering a link fades everything but
+its two endpoints; hover is inert while a node is focused and clears on svg
+mouseleave. `focusOnNode(id)` marks the node with an accent ring, fades
+non-neighbors and all links, then chains zoom transitions translateTo
+(~1000ms) and scaleTo 2.8 (~800ms); a subsequent MANUAL zoom/pan (detected
+via `event.sourceEvent` + a userHasInteracted flag) or a node drag clears
+the focus state; unknown ids return false so search.js falls back to
+navigation. Label level-of-detail keyed to zoom `k`: k > 0.7 all labels;
+0.45 < k ≤ 0.7 only top-quartile-degree labels (min 1); k ≤ 0.45 none
+(smooth opacity transitions). Label LOD stays live during hover and focus
+fades: highlighted labels (the focused/hovered node and its neighbors, or
+a hovered link's endpoints) always follow the CURRENT tier, de-emphasised
+labels sit at the faded opacity — crossing a tier boundary mid-fade must
+neither un-fade de-emphasised labels nor freeze highlighted ones at a
+stale tier. Legend of tag→color in `#graph-legend`. Force
+params baked in one clearly-marked const block. On fetch/init failure:
+`.graph-error` message in `.graph-wrap` and `window.GraphView` is removed
+entirely (teardown) so search falls back to navigation.
 
 `js/app.js` (topic pages and wiki.html): fetch `search-index.json` (prefix `../` on topic pages), render the sidebar
 `#sidebar` as tag-grouped links (same grouping as wiki.html), mark the

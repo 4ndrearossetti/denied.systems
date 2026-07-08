@@ -61,11 +61,12 @@ a { color: var(--accent); text-decoration: none; }
 
 /* ---- 3. Shared header ----------------------------------------------------- */
 
-/* Constant-height bar on every page: min-height governs (all row content —
-   brand line ≈1.5rem, search input ≈1.9rem outer — stays well under 3.3rem
-   minus the .8rem vertical padding), so pages with and without the search
-   widget render the same header height. Wrapped rows on narrow screens may
-   grow taller — that is expected. */
+/* Constant-height bar on every page: min-height governs (tallest row content
+   is the search input, ≈2.17rem outer worst case — see the height budget in
+   the §4 comment above #search-in, the single source of truth; only ~4.3px
+   headroom remains under 3.3rem minus the .8rem vertical padding), so pages
+   with and without the search widget render the same header height. Wrapped
+   rows on narrow screens may grow taller — that is expected. */
 .site-head {
   display: flex;
   align-items: center;
@@ -102,8 +103,11 @@ a { color: var(--accent); text-decoration: none; }
 
 .search { position: relative; }
 
-/* compact: outer height ≈ 1em text + 2×.3rem padding + 2×1px border ≈ 1.85rem,
-   which fits inside the 3.3rem .site-head without growing the row */
+/* compact: the input inherits body line-height 1.7, so worst-case outer
+   height ≈ .85rem×1.7 text + 2×.3rem padding + 2×1px border ≈ 2.17rem
+   (~34.7px) — with the header's own padding that needs ~48.5px, inside the
+   3.3rem (52.8px) .site-head min-height with only ~4.3px headroom. Recheck
+   before adding vertical padding/border here or in .site-head. */
 #search-in {
   width: 15rem;
   max-width: 100%;
@@ -171,13 +175,9 @@ a { color: var(--accent); text-decoration: none; }
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* "no results" style text nodes wrapped in a single muted element */
-.search-out > .empty, .search-out > .none {
-  color: var(--faint);
-  font-family: var(--mono);
-  font-size: .8rem;
-  cursor: default;
-}
+/* no empty-state rules: js/search.js hides the dropdown (`hidden`) when the
+   result list is empty and never emits a "no results" row — if it ever does,
+   style it here as a muted, cursor:default `.search-out > *` variant. */
 
 /* ---- 5. Landing page ------------------------------------------------------ */
 
@@ -193,8 +193,9 @@ body.page-landing {
   padding: 4.5rem 1.25rem 5rem;
 }
 
-/* hero kicker: "// gnss-denied / sensor fusion / …" */
-.landing > .kicker { margin-bottom: 1rem; }
+/* hero kicker spacing lives in §7, AFTER the shared kicker group — an
+   override here would lose to the group's later `.landing .kicker` at equal
+   specificity (0,2,0). */
 
 .site-title {
   margin: 0;
@@ -358,6 +359,15 @@ p.kicker,
 /* the // sigil and any / separators sit in text color; the words stay orange */
 .kicker::before { content: "// "; color: var(--text); }
 .kicker .sep { color: var(--text); }
+
+/* per-view kicker spacing — must sit AFTER the group above: same specificity
+   (0,2,0) as `.landing .kicker`, so only source order lets these win over the
+   group's .6rem default (`.wiki-index .kicker` in §11 relies on the same).
+   `.prose .kicker` is the third per-view case: it restates the group's .6rem
+   at (0,2,0) because the later `.prose p` in §8 (0,1,1) would otherwise beat
+   `p.kicker` (0,1,1) on source order and stretch the gap to 1.1rem. */
+.landing > .kicker { margin-bottom: 1rem; }
+.prose .kicker { margin-bottom: .6rem; }
 
 .page-title {
   margin: 0 0 .6rem;
