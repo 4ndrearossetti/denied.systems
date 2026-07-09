@@ -25,6 +25,10 @@
     <a href="../wiki.html">wiki</a>
     <a href="../graph.html">graph</a>
   </nav>
+  <div class="search">
+    <input id="search-in" type="search" placeholder="search…" autocomplete="off">
+    <div id="search-out" class="search-out" hidden></div>
+  </div>
 </header>
 <div class="layout">
   <nav class="sidebar" id="sidebar" aria-label="all pages"></nav>
@@ -142,6 +146,8 @@ pitch_accel = atan2(-ax, sqrt(ay*ay + az*az))</code></pre>
   <a href="../index.html">← index</a>
 </footer>
 <script src="../js/app.js"></script>
+<script src="../js/search.js"></script>
+<script>SiteSearch.boot('wiki')</script>
 <script src="../js/nav.js"></script>
 </body>
 </html>

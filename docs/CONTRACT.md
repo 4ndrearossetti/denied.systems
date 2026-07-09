@@ -155,10 +155,9 @@ other links is unaffected). There is no separate view toggle.
 ≈3.3rem with centered items); the search widget must stay compact enough
 not to grow the row. Wrapped rows on narrow screens may grow — acceptable.
 
-The header is consistent across the three primary views — the landing
-(`index.html`), `wiki.html`, and `graph.html` all carry the same
-`.site-nav` **and** the search widget below, so it additionally contains,
-after `.site-nav`:
+The header is identical on every page — the landing (`index.html`),
+`wiki.html`, `graph.html`, **and topic pages** all carry the same
+`.site-nav` and the search widget after it:
 
 ```html
 <div class="search">
@@ -167,11 +166,13 @@ after `.site-nav`:
 </div>
 ```
 
-Topic page body (`template.html` renders this; `$…$` are pandoc variables):
+Topic page body (`template.html` renders this; `$…$` are pandoc variables).
+Its header carries the search widget too (with `../`-relative asset paths);
+search.js is loaded and boots in navigate mode:
 
 ```html
 <body class="page-topic">
-  <header class="site-head">…(hrefs ../index.html etc.)…</header>
+  <header class="site-head">…(nav ../index.html etc., then the .search widget)…</header>
   <div class="layout">
     <nav class="sidebar" id="sidebar" aria-label="all pages"></nav>
     <article class="prose">
@@ -190,6 +191,9 @@ Topic page body (`template.html` renders this; `$…$` are pandoc variables):
     <a href="../index.html">← index</a>
   </footer>
   <script src="../js/app.js"></script>
+  <script src="../js/search.js"></script>
+  <script>SiteSearch.boot('wiki')</script>
+  <script src="../js/nav.js"></script>
 </body>
 ```
 
@@ -255,7 +259,11 @@ window.SiteSearch = {
   query(q)           // → ranked [{id,title,summary,url,tags}] (for reuse/tests)
 }
 ```
-- Selection in mode 'wiki': navigate to `result.url`.
+- Loaded on the landing, `wiki.html`, `graph.html`, and topic pages. It is
+  depth-aware: on `body.page-topic` it prefixes the index fetch and result
+  navigation with `../` (index and result urls are site-root-relative), so
+  search works from inside `topics/`.
+- Selection in mode 'wiki': navigate to `result.url` (prefixed on topics).
 - Selection in mode 'graph': call `window.GraphView.focusOnNode(result.id)`
   (fall back to navigation if `GraphView` is absent).
 - Ranking: custom index built at boot — weights title > tags > summary > text;

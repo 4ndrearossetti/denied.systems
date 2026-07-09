@@ -12,6 +12,10 @@
   var WEIGHTS = { title: 8, tags: 5, summary: 3, text: 1 };
   var MAX_RESULTS = 8;
 
+  // Topic pages live one level down in topics/; the index and result urls
+  // are site-root-relative, so from a topic page prefix everything with ../
+  var prefix = (document.body && document.body.classList.contains('page-topic')) ? '../' : '';
+
   var docs = [];      // raw records from search-index.json
   var index = [];     // [{ doc, fields: { title: [tokens], … } }]
   var mode = 'wiki';
@@ -105,7 +109,7 @@
         window.GraphView.focusOnNode(r.id) !== false) {
       if (input) input.blur();
     } else {
-      window.location.href = r.url;
+      window.location.href = prefix + r.url;
     }
   }
 
@@ -188,7 +192,7 @@
     mode = m === 'graph' ? 'graph' : 'wiki';
     wire();
     if (typeof fetch !== 'function') return;
-    fetch('search-index.json')
+    fetch(prefix + 'search-index.json')
       .then(function (res) {
         if (!res.ok) throw new Error('http ' + res.status);
         return res.json();
