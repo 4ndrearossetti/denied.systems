@@ -138,6 +138,7 @@ Shared header, all pages (hrefs adjusted for depth — topic pages prefix `../`)
 <header class="site-head">
   <a class="brand" href="index.html">denied<span class="brand-tld">.systems</span></a>
   <nav class="site-nav">
+    <a href="index.html">home</a>
     <a href="wiki.html">wiki</a>
     <a href="graph.html">graph</a>
   </nav>
@@ -145,17 +146,19 @@ Shared header, all pages (hrefs adjusted for depth — topic pages prefix `../`)
 ```
 
 Active-link convention: the `.site-nav` link for the current view carries
-`class="active"` — the wiki link on `wiki.html`, the graph link on
-`graph.html`. The landing page and topic pages mark nothing. CSS styles it
-as `.site-nav a.active { color: var(--accent) }` (hover on the other links
-is unaffected). There is no separate view toggle.
+`class="active"` — the home link on `index.html`, the wiki link on
+`wiki.html`, the graph link on `graph.html`. Topic pages mark nothing. CSS
+styles it as `.site-nav a.active { color: var(--accent) }` (hover on the
+other links is unaffected). There is no separate view toggle.
 
 `.site-head` renders at a constant height on every page (CSS `min-height`
 ≈3.3rem with centered items); the search widget must stay compact enough
 not to grow the row. Wrapped rows on narrow screens may grow — acceptable.
 
-On `wiki.html` and `graph.html` the header additionally contains, after
-`.site-nav`:
+The header is consistent across the three primary views — the landing
+(`index.html`), `wiki.html`, and `graph.html` all carry the same
+`.site-nav` **and** the search widget below, so it additionally contains,
+after `.site-nav`:
 
 ```html
 <div class="search">
@@ -302,16 +305,21 @@ empty (so the async fill does not shift the article on load); on fetch
 failure or an empty index, app.js sets the `hidden` attribute to collapse
 that reserved column.
 
-`js/nav.js` (loaded on wiki.html, graph.html, and topic pages — any page
-with a `.search` and/or `#sidebar`): builds the mobile navigation. It
-injects a hamburger button as the first child of `.site-head` and an
+`js/nav.js` (loaded on index.html, wiki.html, graph.html, and topic pages —
+any page with a `.search` and/or `#sidebar`): builds the mobile navigation.
+It injects a hamburger button as the first child of `.site-head` and an
 off-canvas `.drawer` + `.nav-backdrop` at the end of `<body>`. At ≤900px
 (matchMedia) it MOVES the page's existing `.search` and `#sidebar` nodes
 into the drawer and back to their original parents above that width, so the
 desktop layout is unchanged and no markup is duplicated. Toggling adds
 `body.nav-open`; Escape, backdrop click, and activating a link or search
-result inside the drawer all close it. The landing page loads no JS and has
-neither element, so it gets no hamburger.
+result inside the drawer all close it.
+
+The landing (`index.html`) loads `js/search.js` (its search box) and
+`js/nav.js`; selecting a search result navigates to the page (it boots in
+the navigate mode, like the wiki). Search results across all views carry
+site-root-relative urls, which resolve from `index.html`/`wiki.html`/
+`graph.html` directly and from topic pages via the sidebar instead.
 
 ## 7. Design tokens (defined once in style.css as CSS custom properties)
 

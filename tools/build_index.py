@@ -328,6 +328,7 @@ def build_wiki_html(pages, site_url):
 <header class="site-head">
   <a class="brand" href="index.html">denied<span class="brand-tld">.systems</span></a>
   <nav class="site-nav">
+    <a href="index.html">home</a>
     <a class="active" href="wiki.html">wiki</a>
     <a href="graph.html">graph</a>
   </nav>
