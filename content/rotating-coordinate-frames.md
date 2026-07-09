@@ -220,8 +220,8 @@ float r_dot = tau_z / Izz + (Ixx - Iyy) / Izz * p * q;
 Those extra terms are the transport theorem at work on the angular
 momentum vector. Nothing more.
 
-This C code belongs in the physics model of [[drone-pid-hardware-path]]
-— the sim currently drops these
+This C code belongs in the physics model of a flight simulator
+— one that currently drops these
 terms, and this note is the reference for adding them when the flight regime
 demands it.
 

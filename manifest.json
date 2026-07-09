@@ -38,7 +38,7 @@
       ],
       "updated": "2026-06-17",
       "url": "topics/complementary-filter.html",
-      "words": 460
+      "words": 458
     },
     {
       "id": "cortex-m-bare-metal-boot",
@@ -136,7 +136,7 @@
       ],
       "updated": "2026-07-06",
       "url": "topics/quaternion-kinematics-eskf.html",
-      "words": 1765
+      "words": 1752
     },
     {
       "id": "rotating-coordinate-frames",
@@ -148,7 +148,7 @@
       ],
       "updated": "2026-06-28",
       "url": "topics/rotating-coordinate-frames.html",
-      "words": 1221
+      "words": 1223
     },
     {
       "id": "thrust-vector-from-attitude",
@@ -209,7 +209,7 @@
       ],
       "updated": "2026-07-09",
       "url": "topics/unix-signals.html",
-      "words": 989
+      "words": 963
     },
     {
       "id": "vla-architecture-action-chunking-flow-matching",

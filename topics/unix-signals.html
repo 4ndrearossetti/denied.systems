@@ -38,7 +38,7 @@
       <span class="tag" data-tag="concurrency">concurrency</span>
     </p>
 <p>A signal is the Unix mechanism for asynchronous, preemptive notification to a process. ~30 named events, each a small integer: <code>SIGINT</code> (Ctrl-C), <code>SIGSEGV</code> (bad memory access), <code>SIGALRM</code> (timer expiry), etc. The kernel delivers them by suspending the process mid-execution, saving its state, and jumping to a registered handler function. Same model as a hardware interrupt — different layer.</p>
-<p>See also: <a href="freertos-tcb.html" class="wikilink">freertos-tcb</a> (how a Cortex-M ISR does this in hardware), <span class="wikilink broken">freertos-metronome-pattern</span> (a timer fires → signal handler → task wakes — same pattern, same names, different substrate), <span class="wikilink broken">cortex-m-interrupts</span> (the Cortex-M hardware version of this same mechanism), <a href="cortex-m-bare-metal-boot.html" class="wikilink">cortex-m-bare-metal-boot</a> (what you need before interrupts work).</p>
+<p>See also: <a href="freertos-tcb.html" class="wikilink">freertos-tcb</a> (how a Cortex-M ISR does this in hardware), <a href="cortex-m-bare-metal-boot.html" class="wikilink">cortex-m-bare-metal-boot</a> (what you need before interrupts work).</p>
 <h2 id="the-mechanism">The mechanism</h2>
 <p>When the kernel delivers a signal to your process:</p>
 <ol type="1">

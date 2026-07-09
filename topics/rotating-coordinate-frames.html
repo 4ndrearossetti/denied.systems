@@ -206,7 +206,7 @@ q_1\dot{\hat{\mathbf{e}}}_1 + q_2\dot{\hat{\mathbf{e}}}_2 + q_3\dot{\hat{\mathbf
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> q_dot <span class="op">=</span> tau_y <span class="op">/</span> Iyy <span class="op">+</span> <span class="op">(</span>Izz <span class="op">-</span> Ixx<span class="op">)</span> <span class="op">/</span> Ixx <span class="op">*</span> p <span class="op">*</span> r<span class="op">;</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dt">float</span> r_dot <span class="op">=</span> tau_z <span class="op">/</span> Izz <span class="op">+</span> <span class="op">(</span>Ixx <span class="op">-</span> Iyy<span class="op">)</span> <span class="op">/</span> Izz <span class="op">*</span> p <span class="op">*</span> q<span class="op">;</span></span></code></pre></div>
 <p>Those extra terms are the transport theorem at work on the angular momentum vector. Nothing more.</p>
-<p>This C code belongs in the physics model of <span class="wikilink broken">drone-pid-hardware-path</span> — the sim currently drops these terms, and this note is the reference for adding them when the flight regime demands it.</p>
+<p>This C code belongs in the physics model of a flight simulator — one that currently drops these terms, and this note is the reference for adding them when the flight regime demands it.</p>
 <hr />
 <h2 id="summary">Summary</h2>
 <ul>

@@ -56,6 +56,6 @@ For a quadcopter in attitude-hold or gentle flight, α = 0.02–0.05 works well.
 
 ## On hardware
 
-The filter runs inside the control task (see [[freertos-metronome-pattern]]), after `mpu6050_read()` and before `control_update()`. The gyro integration step (`p · dt`) uses the same dt as the control loop. The `roll_accel` and `pitch_accel` terms can be computed at a lower rate (every 4th tick, 50 Hz) since the accel is slow-changing — saves CPU cycles on the microcontroller.
+The filter runs inside the control task, after `mpu6050_read()` and before `control_update()`. The gyro integration step (`p · dt`) uses the same dt as the control loop. The `roll_accel` and `pitch_accel` terms can be computed at a lower rate (every 4th tick, 50 Hz) since the accel is slow-changing — saves CPU cycles on the microcontroller.
 
 The pitch formula sign assumes the sensor is mounted with +x forward, +y right, +z down (NED). If the sensor mount flips any axis, adjust the sign in the atan2 calls — not in the control code.

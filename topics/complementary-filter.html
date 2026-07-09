@@ -120,7 +120,7 @@ pitch = (1 - α) · (pitch_prev + q · dt) + α · pitch_accel</code></pre>
 <li><strong>Absolute position.</strong> The complementary filter estimates attitude only. Position requires additional sensors (barometer, GPS, optical flow).</li>
 </ul>
 <h2 id="on-hardware">On hardware</h2>
-<p>The filter runs inside the control task (see <span class="wikilink broken">freertos-metronome-pattern</span>), after <code>mpu6050_read()</code> and before <code>control_update()</code>. The gyro integration step (<code>p · dt</code>) uses the same dt as the control loop. The <code>roll_accel</code> and <code>pitch_accel</code> terms can be computed at a lower rate (every 4th tick, 50 Hz) since the accel is slow-changing — saves CPU cycles on the microcontroller.</p>
+<p>The filter runs inside the control task, after <code>mpu6050_read()</code> and before <code>control_update()</code>. The gyro integration step (<code>p · dt</code>) uses the same dt as the control loop. The <code>roll_accel</code> and <code>pitch_accel</code> terms can be computed at a lower rate (every 4th tick, 50 Hz) since the accel is slow-changing — saves CPU cycles on the microcontroller.</p>
 <p>The pitch formula sign assumes the sensor is mounted with +x forward, +y right, +z down (NED). If the sensor mount flips any axis, adjust the sign in the atan2 calls — not in the control code.</p>
   </article>
 </div>

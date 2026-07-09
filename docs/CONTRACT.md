@@ -337,21 +337,23 @@ site-root-relative urls, which resolve from `index.html`/`wiki.html`/
 /* tag palette, in assignment order: */
 --tag-1: #d4643a;  --tag-2: #8296ad;  --tag-3: #96ad82;
 --tag-4: #c8a565;  --tag-5: #a08cb0;  --tag-6: #948b7e;
---mono: "JetBrains Mono", ui-monospace, "Cascadia Code", SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace;
+--mono: ui-monospace, "DejaVu Sans Mono", "Liberation Mono", Menlo, Consolas, monospace;
 --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 ```
 
-Identity: true warm black, burnt signal orange accent. **Monospace for all
-chrome** — title, kickers, nav, buttons, headings (h2–h4), tables headers,
-metadata, code — and a **system sans for body reading prose** (paragraphs,
-lists, ledes, summaries, table cells) for legibility; the mono/sans split
-is the type hierarchy. Chrome elements set `font-family: var(--mono)`
-explicitly; everything else inherits the sans `body` font. Warm hairline
-borders, `//`-prefixed kickers, a faint blueprint grid behind page content
+Identity: true warm black, burnt signal orange accent. **Monospace is the
+default everywhere** — the whole site (chrome, the landing, the wiki index)
+is mono; `body` sets `var(--mono)`. The one exception is **the note text
+itself**: `.prose` (a topic page's article body — paragraphs, lists,
+ledes, table cells) switches to the system `--sans` for legibility, while
+headings, code, kicker, title and meta inside `.prose` stay mono (they set
+it explicitly and win). So the mono/sans split is scoped to topic-page
+reading prose only. The mono stack is the system monospace (no bundled
+web font). Warm hairline borders, `//`-prefixed kickers, a faint blueprint grid behind page content
 on the landing, wiki, and graph views (the `.site-head` paints solid
 `--bg` over it, so the header reads all-black on every page),
-dense-but-legible (prose measure ~42rem, 16px, line-height ~1.65). `html`
-sets
+dense-but-legible (mono body 15.5px/1.7; the sans note prose 16px/1.65,
+measure ~42rem). `html` sets
 `scrollbar-gutter: stable both-edges` so header margins stay symmetric.
 Mobile (≤900px): the header collapses to a hamburger that opens an
 off-canvas drawer holding the search + sidebar (see `js/nav.js`); the graph

@@ -7,7 +7,7 @@ updated: 2026-07-09
 
 A signal is the Unix mechanism for asynchronous, preemptive notification to a process. ~30 named events, each a small integer: `SIGINT` (Ctrl-C), `SIGSEGV` (bad memory access), `SIGALRM` (timer expiry), etc. The kernel delivers them by suspending the process mid-execution, saving its state, and jumping to a registered handler function. Same model as a hardware interrupt — different layer.
 
-See also: [[freertos-tcb]] (how a Cortex-M ISR does this in hardware), [[freertos-metronome-pattern]] (a timer fires → signal handler → task wakes — same pattern, same names, different substrate), [[cortex-m-interrupts]] (the Cortex-M hardware version of this same mechanism), [[cortex-m-bare-metal-boot]] (what you need before interrupts work).
+See also: [[freertos-tcb]] (how a Cortex-M ISR does this in hardware), [[cortex-m-bare-metal-boot]] (what you need before interrupts work).
 
 ## The mechanism
 
