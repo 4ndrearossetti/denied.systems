@@ -40,59 +40,22 @@
     <section>
       <h2>the problem</h2>
       <p>
-        Most small autonomous aircraft are built on a quiet assumption: that a
+        Most small autonomous aircraft are built assuming that a
         constellation of satellites will always tell them where they are. In
         contested airspace that assumption fails first. Jamming removes the
         signal; spoofing replaces it with a lie, which is worse. An airframe
         that cannot answer <em>where am I?</em> without outside help is not
-        autonomous — it is remote-controlled by whoever controls the spectrum.
+        autonomous, but remote-controlled by whoever controls the spectrum.
       </p>
       <p>
         This site maps the engineering that removes that assumption: how a
         vehicle keeps a usable estimate of its own position, velocity, and
         attitude when every external reference is degraded, denied, or hostile.
       </p>
-    </section>
-
-    <section>
-      <h2>navigation without the constellation</h2>
-      <p>
-        The core discipline is <a href="topics/gnss-denied-navigation.html">GNSS-denied
-        navigation</a>: flying on what the airframe can sense for itself.
-        Inertial sensors give you dead reckoning that drifts without bound;
-        everything else in the stack exists to fight that drift — terrain and
-        magnetic references, celestial fixes, signals of opportunity, and
-        above all, cameras.
-      </p>
-      <p>
-        The workhorse of the camera-based approach is
-        <a href="topics/visual-inertial-odometry.html">visual-inertial
-        odometry</a>: fusing high-rate IMU integration with visual feature
-        tracks to hold drift to a fraction of a percent of distance travelled,
-        on compute that fits a small airframe's power budget.
-      </p>
-    </section>
-
-    <section>
-      <h2>from estimate to action</h2>
-      <p>
-        A position estimate is only useful if the vehicle can act on it under
-        the same constraints it was made under. Perception-to-control on
-        embedded compute, guidance laws that tolerate noisy state, and mission
-        logic that degrades gracefully instead of failing brittle — these are
-        the downstream halves of the same problem, and later pages will treat
-        them with the same field-guide discipline.
-      </p>
-    </section>
-
-    <section>
-      <h2>how to read this site</h2>
       <p>
         Every page here is a node in one connected graph of ideas. Browse the
         full index in the <a href="wiki.html">wiki view</a>, or see how the
-        topics actually connect in the <a href="graph.html">graph view</a> —
-        pages are nodes, cross-references are edges, and clicking a node opens
-        its page. Start anywhere; the links will carry you.
+        topics actually connect in the <a href="graph.html">graph view</a>.
       </p>
     </section>
 

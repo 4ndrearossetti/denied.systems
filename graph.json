@@ -1,34 +1,299 @@
 {
   "nodes": [
     {
-      "id": "gnss-denied-navigation",
-      "title": "GNSS-Denied Navigation",
-      "url": "topics/gnss-denied-navigation.html",
+      "id": "accel-roll-pitch-derivation",
+      "title": "Roll and pitch from accelerometer",
+      "url": "topics/accel-roll-pitch-derivation.html",
       "tags": [
-        "navigation",
-        "sensor-fusion"
+        "state-estimation",
+        "kinematics"
+      ],
+      "degree": 3
+    },
+    {
+      "id": "ai-enabled-mid-range-strike-drones",
+      "title": "AI-Enabled Mid-Range Strike Drones (Azov Unit Perspective)",
+      "url": "topics/ai-enabled-mid-range-strike-drones.html",
+      "tags": [
+        "autonomy",
+        "ukraine",
+        "operational",
+        "case-study"
       ],
       "degree": 1
     },
     {
-      "id": "visual-inertial-odometry",
-      "title": "Visual-Inertial Odometry",
-      "url": "topics/visual-inertial-odometry.html",
+      "id": "complementary-filter",
+      "title": "Complementary filter for attitude estimation",
+      "url": "topics/complementary-filter.html",
       "tags": [
-        "sensor-fusion",
-        "perception"
+        "state-estimation",
+        "sensor-fusion"
+      ],
+      "degree": 3
+    },
+    {
+      "id": "cortex-m-bare-metal-boot",
+      "title": "Cortex-M Bare-Metal Boot",
+      "url": "topics/cortex-m-bare-metal-boot.html",
+      "tags": [
+        "embedded-systems",
+        "cortex-m"
       ],
       "degree": 1
+    },
+    {
+      "id": "euler-body-rate-cross-coupling",
+      "title": "Body rate cross-coupling and when you can ignore it",
+      "url": "topics/euler-body-rate-cross-coupling.html",
+      "tags": [
+        "state-estimation",
+        "kinematics"
+      ],
+      "degree": 4
+    },
+    {
+      "id": "freertos-tcb",
+      "title": "FreeRTOS Task Control Block (TCB)",
+      "url": "topics/freertos-tcb.html",
+      "tags": [
+        "embedded-systems",
+        "rtos"
+      ],
+      "degree": 1
+    },
+    {
+      "id": "i2c-protocol",
+      "title": "I2C Protocol",
+      "url": "topics/i2c-protocol.html",
+      "tags": [
+        "sensing",
+        "i2c"
+      ],
+      "degree": 2
+    },
+    {
+      "id": "i2c-pullups",
+      "title": "I2C Pull-up Resistors",
+      "url": "topics/i2c-pullups.html",
+      "tags": [
+        "sensing",
+        "i2c"
+      ],
+      "degree": 1
+    },
+    {
+      "id": "metaheuristic-pid-tuning-quadcopter",
+      "title": "Metaheuristic PID Tuning for Quadcopter Stabilization",
+      "url": "topics/metaheuristic-pid-tuning-quadcopter.html",
+      "tags": [
+        "guidance-control",
+        "pid"
+      ],
+      "degree": 0
+    },
+    {
+      "id": "mpu-6050",
+      "title": "MPU-6050: MEMS IMU",
+      "url": "topics/mpu-6050.html",
+      "tags": [
+        "sensing",
+        "imu",
+        "i2c"
+      ],
+      "degree": 2
+    },
+    {
+      "id": "quaternion-kinematics-eskf",
+      "title": "Quaternion kinematics for the error-state Kalman filter",
+      "url": "topics/quaternion-kinematics-eskf.html",
+      "tags": [
+        "state-estimation",
+        "sensor-fusion",
+        "vio"
+      ],
+      "degree": 0
+    },
+    {
+      "id": "rotating-coordinate-frames",
+      "title": "Rotating coordinate frames and the transport theorem",
+      "url": "topics/rotating-coordinate-frames.html",
+      "tags": [
+        "state-estimation",
+        "kinematics"
+      ],
+      "degree": 5
+    },
+    {
+      "id": "thrust-vector-from-attitude",
+      "title": "Thrust vector from attitude angles",
+      "url": "topics/thrust-vector-from-attitude.html",
+      "tags": [
+        "guidance-control",
+        "kinematics"
+      ],
+      "degree": 2
+    },
+    {
+      "id": "tiltdrone-fully-actuated-tilting-quadrotor",
+      "title": "TiltDrone: Fully-Actuated Tilting Quadrotor Platform",
+      "url": "topics/tiltdrone-fully-actuated-tilting-quadrotor.html",
+      "tags": [
+        "guidance-control"
+      ],
+      "degree": 1
+    },
+    {
+      "id": "torque-yaw-control",
+      "title": "Quadcopter Flight Physics Overview",
+      "url": "topics/torque-yaw-control.html",
+      "tags": [
+        "guidance-control",
+        "pid"
+      ],
+      "degree": 0
+    },
+    {
+      "id": "ukraine-ai-terminal-phase-drone-strikes",
+      "title": "Ukraine AI Terminal-Phase Drone Strikes",
+      "url": "topics/ukraine-ai-terminal-phase-drone-strikes.html",
+      "tags": [
+        "autonomy",
+        "ukraine",
+        "operational",
+        "case-study"
+      ],
+      "degree": 1
+    },
+    {
+      "id": "unix-signals",
+      "title": "Unix signals",
+      "url": "topics/unix-signals.html",
+      "tags": [
+        "embedded-systems",
+        "concurrency"
+      ],
+      "degree": 0
+    },
+    {
+      "id": "vla-architecture-action-chunking-flow-matching",
+      "title": "VLA Architecture: Vision-Language-Action Models for Robotics",
+      "url": "topics/vla-architecture-action-chunking-flow-matching.html",
+      "tags": [
+        "autonomy",
+        "learned-policy"
+      ],
+      "degree": 0
     }
   ],
   "edges": [
     {
-      "source": "gnss-denied-navigation",
-      "target": "visual-inertial-odometry"
+      "source": "accel-roll-pitch-derivation",
+      "target": "complementary-filter"
     },
     {
-      "source": "visual-inertial-odometry",
-      "target": "gnss-denied-navigation"
+      "source": "ai-enabled-mid-range-strike-drones",
+      "target": "ukraine-ai-terminal-phase-drone-strikes"
+    },
+    {
+      "source": "complementary-filter",
+      "target": "accel-roll-pitch-derivation"
+    },
+    {
+      "source": "euler-body-rate-cross-coupling",
+      "target": "rotating-coordinate-frames"
+    },
+    {
+      "source": "i2c-protocol",
+      "target": "i2c-pullups"
+    },
+    {
+      "source": "i2c-protocol",
+      "target": "mpu-6050"
+    },
+    {
+      "source": "i2c-pullups",
+      "target": "i2c-protocol"
+    },
+    {
+      "source": "i2c-pullups",
+      "target": "mpu-6050"
+    },
+    {
+      "source": "metaheuristic-pid-tuning-quadcopter",
+      "target": "euler-body-rate-cross-coupling"
+    },
+    {
+      "source": "mpu-6050",
+      "target": "i2c-protocol"
+    },
+    {
+      "source": "quaternion-kinematics-eskf",
+      "target": "accel-roll-pitch-derivation"
+    },
+    {
+      "source": "quaternion-kinematics-eskf",
+      "target": "complementary-filter"
+    },
+    {
+      "source": "quaternion-kinematics-eskf",
+      "target": "euler-body-rate-cross-coupling"
+    },
+    {
+      "source": "quaternion-kinematics-eskf",
+      "target": "rotating-coordinate-frames"
+    },
+    {
+      "source": "rotating-coordinate-frames",
+      "target": "euler-body-rate-cross-coupling"
+    },
+    {
+      "source": "thrust-vector-from-attitude",
+      "target": "euler-body-rate-cross-coupling"
+    },
+    {
+      "source": "thrust-vector-from-attitude",
+      "target": "rotating-coordinate-frames"
+    },
+    {
+      "source": "tiltdrone-fully-actuated-tilting-quadrotor",
+      "target": "rotating-coordinate-frames"
+    },
+    {
+      "source": "tiltdrone-fully-actuated-tilting-quadrotor",
+      "target": "thrust-vector-from-attitude"
+    },
+    {
+      "source": "torque-yaw-control",
+      "target": "accel-roll-pitch-derivation"
+    },
+    {
+      "source": "torque-yaw-control",
+      "target": "complementary-filter"
+    },
+    {
+      "source": "torque-yaw-control",
+      "target": "rotating-coordinate-frames"
+    },
+    {
+      "source": "torque-yaw-control",
+      "target": "thrust-vector-from-attitude"
+    },
+    {
+      "source": "ukraine-ai-terminal-phase-drone-strikes",
+      "target": "ai-enabled-mid-range-strike-drones"
+    },
+    {
+      "source": "unix-signals",
+      "target": "cortex-m-bare-metal-boot"
+    },
+    {
+      "source": "unix-signals",
+      "target": "freertos-tcb"
+    },
+    {
+      "source": "vla-architecture-action-chunking-flow-matching",
+      "target": "tiltdrone-fully-actuated-tilting-quadrotor"
     }
   ]
 }

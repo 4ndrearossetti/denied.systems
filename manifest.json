@@ -3,28 +3,225 @@
   "site": "https://denied.systems",
   "pages": [
     {
-      "id": "gnss-denied-navigation",
-      "title": "GNSS-Denied Navigation",
-      "summary": "How an autonomous aircraft keeps a usable state estimate when satellite navigation is jammed, spoofed, or simply absent.",
+      "id": "accel-roll-pitch-derivation",
+      "title": "Roll and pitch from accelerometer",
+      "summary": "Deriving roll and pitch from the accelerometer out of the rotation matrix, so the formulas - and their signs - are never guesswork.",
       "tags": [
-        "navigation",
-        "sensor-fusion"
+        "state-estimation",
+        "kinematics"
       ],
-      "updated": "2026-07-07",
-      "url": "topics/gnss-denied-navigation.html",
-      "words": 355
+      "updated": "2026-06-17",
+      "url": "topics/accel-roll-pitch-derivation.html",
+      "words": 743
     },
     {
-      "id": "visual-inertial-odometry",
-      "title": "Visual-Inertial Odometry",
-      "summary": "Fusing camera tracking with inertial propagation to hold a drift-bounded pose estimate without any external positioning.",
+      "id": "ai-enabled-mid-range-strike-drones",
+      "title": "AI-Enabled Mid-Range Strike Drones (Azov Unit Perspective)",
+      "summary": "An operational view of deep-strike drones: field modification labs, terminal-only AI guidance, and the argument that adaptation speed, not resources, is the real force multiplier.",
       "tags": [
-        "sensor-fusion",
-        "perception"
+        "autonomy",
+        "ukraine",
+        "operational",
+        "case-study"
       ],
-      "updated": "2026-07-07",
-      "url": "topics/visual-inertial-odometry.html",
-      "words": 315
+      "updated": "2026-06-29",
+      "url": "topics/ai-enabled-mid-range-strike-drones.html",
+      "words": 558
+    },
+    {
+      "id": "complementary-filter",
+      "title": "Complementary filter for attitude estimation",
+      "summary": "Fusing a drifting gyro and a noisy accelerometer into one roll/pitch estimate by splitting the frequency domain - the simplest useful attitude filter.",
+      "tags": [
+        "state-estimation",
+        "sensor-fusion"
+      ],
+      "updated": "2026-06-17",
+      "url": "topics/complementary-filter.html",
+      "words": 460
+    },
+    {
+      "id": "cortex-m-bare-metal-boot",
+      "title": "Cortex-M Bare-Metal Boot",
+      "summary": "What happens between power-on and main on a Cortex-M - stack-pointer init, data and bss setup, and the hosted-runtime preamble you write yourself with no OS or libc.",
+      "tags": [
+        "embedded-systems",
+        "cortex-m"
+      ],
+      "updated": "2026-07-09",
+      "url": "topics/cortex-m-bare-metal-boot.html",
+      "words": 879
+    },
+    {
+      "id": "euler-body-rate-cross-coupling",
+      "title": "Body rate cross-coupling and when you can ignore it",
+      "summary": "How measured body rates couple into Euler-angle rates, and the conditions under which the cross-coupling terms can be safely ignored.",
+      "tags": [
+        "state-estimation",
+        "kinematics"
+      ],
+      "updated": "2026-06-28",
+      "url": "topics/euler-body-rate-cross-coupling.html",
+      "words": 526
+    },
+    {
+      "id": "freertos-tcb",
+      "title": "FreeRTOS Task Control Block (TCB)",
+      "summary": "The FreeRTOS Task Control Block - the per-task struct the scheduler uses to track, save, and restore a task, and how it relates to the task's separate stack.",
+      "tags": [
+        "embedded-systems",
+        "rtos"
+      ],
+      "updated": "2026-06-18",
+      "url": "topics/freertos-tcb.html",
+      "words": 653
+    },
+    {
+      "id": "i2c-protocol",
+      "title": "I2C Protocol",
+      "summary": "The I2C two-wire, open-drain, master-slave bus that connects sensors like the MPU-6050 to a microcontroller on the same board.",
+      "tags": [
+        "sensing",
+        "i2c"
+      ],
+      "updated": "2026-06-14",
+      "url": "topics/i2c-protocol.html",
+      "words": 1150
+    },
+    {
+      "id": "i2c-pullups",
+      "title": "I2C Pull-up Resistors",
+      "summary": "Why I2C needs pull-up resistors on SDA and SCL, how to size them, and what breaks when they are missing or wrong.",
+      "tags": [
+        "sensing",
+        "i2c"
+      ],
+      "updated": "2026-06-14",
+      "url": "topics/i2c-pullups.html",
+      "words": 652
+    },
+    {
+      "id": "metaheuristic-pid-tuning-quadcopter",
+      "title": "Metaheuristic PID Tuning for Quadcopter Stabilization",
+      "summary": "A 2021 study comparing genetic-algorithm, crow-search, and particle-swarm tuning against Ziegler-Nichols for auto-tuning quadcopter PID gains.",
+      "tags": [
+        "guidance-control",
+        "pid"
+      ],
+      "updated": "2026-06-28",
+      "url": "topics/metaheuristic-pid-tuning-quadcopter.html",
+      "words": 262
+    },
+    {
+      "id": "mpu-6050",
+      "title": "MPU-6050: MEMS IMU",
+      "summary": "The MPU-6050 MEMS IMU: a 3-axis accelerometer and gyroscope on one die, the six raw measurements a complementary or Kalman filter fuses into attitude.",
+      "tags": [
+        "sensing",
+        "imu",
+        "i2c"
+      ],
+      "updated": "2026-06-14",
+      "url": "topics/mpu-6050.html",
+      "words": 682
+    },
+    {
+      "id": "quaternion-kinematics-eskf",
+      "title": "Quaternion kinematics for the error-state Kalman filter",
+      "summary": "A working guide to Joan Sola's quaternion kinematics for the error-state Kalman filter - the reference for fusing IMU data with external corrections in an ESKF/VIO estimator.",
+      "tags": [
+        "state-estimation",
+        "sensor-fusion",
+        "vio"
+      ],
+      "updated": "2026-07-06",
+      "url": "topics/quaternion-kinematics-eskf.html",
+      "words": 1765
+    },
+    {
+      "id": "rotating-coordinate-frames",
+      "title": "Rotating coordinate frames and the transport theorem",
+      "summary": "Rotating frames and the transport theorem - the NED-frame conventions and derivative rules behind body-to-world rotation in a flight estimator.",
+      "tags": [
+        "state-estimation",
+        "kinematics"
+      ],
+      "updated": "2026-06-28",
+      "url": "topics/rotating-coordinate-frames.html",
+      "words": 1221
+    },
+    {
+      "id": "thrust-vector-from-attitude",
+      "title": "Thrust vector from attitude angles",
+      "summary": "Mapping attitude angles to a body thrust vector in the NED frame - how a desired orientation becomes the direction the rotors push.",
+      "tags": [
+        "guidance-control",
+        "kinematics"
+      ],
+      "updated": "2026-06-28",
+      "url": "topics/thrust-vector-from-attitude.html",
+      "words": 944
+    },
+    {
+      "id": "tiltdrone-fully-actuated-tilting-quadrotor",
+      "title": "TiltDrone: Fully-Actuated Tilting Quadrotor Platform",
+      "summary": "TiltDrone, a fully-actuated quadrotor whose biaxial tilting rotors decouple translation from rotation, giving independent control of all six degrees of freedom.",
+      "tags": [
+        "guidance-control"
+      ],
+      "updated": "2026-06-28",
+      "url": "topics/tiltdrone-fully-actuated-tilting-quadrotor.html",
+      "words": 577
+    },
+    {
+      "id": "torque-yaw-control",
+      "title": "Quadcopter Flight Physics Overview",
+      "summary": "The fundamental physics of quadcopter flight - forces, stability, and the torque and yaw control principles that control theory and simulation build on.",
+      "tags": [
+        "guidance-control",
+        "pid"
+      ],
+      "updated": "2026-06-28",
+      "url": "topics/torque-yaw-control.html",
+      "words": 316
+    },
+    {
+      "id": "ukraine-ai-terminal-phase-drone-strikes",
+      "title": "Ukraine AI Terminal-Phase Drone Strikes",
+      "summary": "AI scoped to the terminal dive only - GPS-denied terrain matching, adversarial-hardened target recognition, and final-approach guidance - with the human in the loop for the rest of the mission.",
+      "tags": [
+        "autonomy",
+        "ukraine",
+        "operational",
+        "case-study"
+      ],
+      "updated": "2026-06-29",
+      "url": "topics/ukraine-ai-terminal-phase-drone-strikes.html",
+      "words": 759
+    },
+    {
+      "id": "unix-signals",
+      "title": "Unix signals",
+      "summary": "Unix signals as asynchronous, preemptive notification to a process - the same suspend-save-jump model as a hardware interrupt, one layer up.",
+      "tags": [
+        "embedded-systems",
+        "concurrency"
+      ],
+      "updated": "2026-07-09",
+      "url": "topics/unix-signals.html",
+      "words": 989
+    },
+    {
+      "id": "vla-architecture-action-chunking-flow-matching",
+      "title": "VLA Architecture: Vision-Language-Action Models for Robotics",
+      "summary": "Vision-Language-Action model architecture - a large VLM backbone paired with a small real-time action expert, as used by NVIDIA GR00T N1 and Physical Intelligence's pi-zero.",
+      "tags": [
+        "autonomy",
+        "learned-policy"
+      ],
+      "updated": "2026-06-28",
+      "url": "topics/vla-architecture-action-chunking-flow-matching.html",
+      "words": 831
     }
   ]
 }

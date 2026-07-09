@@ -29,23 +29,118 @@
   <nav class="sidebar" id="sidebar" aria-label="all pages"></nav>
   <main class="wiki-index">
   <p class="kicker">index of all pages</p>
-  <section class="tag-group" data-tag="navigation">
-    <h2 class="tag-head">navigation</h2>
+  <section class="tag-group" data-tag="autonomy">
+    <h2 class="tag-head">autonomy</h2>
     <ul class="page-list">
-      <li><a href="topics/gnss-denied-navigation.html">
-        <span class="pl-title">GNSS-Denied Navigation</span>
-        <span class="pl-summary">How an autonomous aircraft keeps a usable state estimate when satellite navigation is jammed, spoofed, or simply absent.</span>
-        <span class="pl-meta">updated 2026-07-07</span>
+      <li><a href="topics/ai-enabled-mid-range-strike-drones.html">
+        <span class="pl-title">AI-Enabled Mid-Range Strike Drones (Azov Unit Perspective)</span>
+        <span class="pl-summary">An operational view of deep-strike drones: field modification labs, terminal-only AI guidance, and the argument that adaptation speed, not resources, is the real force multiplier.</span>
+        <span class="pl-meta">updated 2026-06-29</span>
+      </a></li>
+      <li><a href="topics/ukraine-ai-terminal-phase-drone-strikes.html">
+        <span class="pl-title">Ukraine AI Terminal-Phase Drone Strikes</span>
+        <span class="pl-summary">AI scoped to the terminal dive only - GPS-denied terrain matching, adversarial-hardened target recognition, and final-approach guidance - with the human in the loop for the rest of the mission.</span>
+        <span class="pl-meta">updated 2026-06-29</span>
+      </a></li>
+      <li><a href="topics/vla-architecture-action-chunking-flow-matching.html">
+        <span class="pl-title">VLA Architecture: Vision-Language-Action Models for Robotics</span>
+        <span class="pl-summary">Vision-Language-Action model architecture - a large VLM backbone paired with a small real-time action expert, as used by NVIDIA GR00T N1 and Physical Intelligence&#x27;s pi-zero.</span>
+        <span class="pl-meta">updated 2026-06-28</span>
       </a></li>
     </ul>
   </section>
-  <section class="tag-group" data-tag="sensor-fusion">
-    <h2 class="tag-head">sensor-fusion</h2>
+  <section class="tag-group" data-tag="embedded-systems">
+    <h2 class="tag-head">embedded-systems</h2>
     <ul class="page-list">
-      <li><a href="topics/visual-inertial-odometry.html">
-        <span class="pl-title">Visual-Inertial Odometry</span>
-        <span class="pl-summary">Fusing camera tracking with inertial propagation to hold a drift-bounded pose estimate without any external positioning.</span>
-        <span class="pl-meta">updated 2026-07-07</span>
+      <li><a href="topics/cortex-m-bare-metal-boot.html">
+        <span class="pl-title">Cortex-M Bare-Metal Boot</span>
+        <span class="pl-summary">What happens between power-on and main on a Cortex-M - stack-pointer init, data and bss setup, and the hosted-runtime preamble you write yourself with no OS or libc.</span>
+        <span class="pl-meta">updated 2026-07-09</span>
+      </a></li>
+      <li><a href="topics/freertos-tcb.html">
+        <span class="pl-title">FreeRTOS Task Control Block (TCB)</span>
+        <span class="pl-summary">The FreeRTOS Task Control Block - the per-task struct the scheduler uses to track, save, and restore a task, and how it relates to the task&#x27;s separate stack.</span>
+        <span class="pl-meta">updated 2026-06-18</span>
+      </a></li>
+      <li><a href="topics/unix-signals.html">
+        <span class="pl-title">Unix signals</span>
+        <span class="pl-summary">Unix signals as asynchronous, preemptive notification to a process - the same suspend-save-jump model as a hardware interrupt, one layer up.</span>
+        <span class="pl-meta">updated 2026-07-09</span>
+      </a></li>
+    </ul>
+  </section>
+  <section class="tag-group" data-tag="guidance-control">
+    <h2 class="tag-head">guidance-control</h2>
+    <ul class="page-list">
+      <li><a href="topics/metaheuristic-pid-tuning-quadcopter.html">
+        <span class="pl-title">Metaheuristic PID Tuning for Quadcopter Stabilization</span>
+        <span class="pl-summary">A 2021 study comparing genetic-algorithm, crow-search, and particle-swarm tuning against Ziegler-Nichols for auto-tuning quadcopter PID gains.</span>
+        <span class="pl-meta">updated 2026-06-28</span>
+      </a></li>
+      <li><a href="topics/torque-yaw-control.html">
+        <span class="pl-title">Quadcopter Flight Physics Overview</span>
+        <span class="pl-summary">The fundamental physics of quadcopter flight - forces, stability, and the torque and yaw control principles that control theory and simulation build on.</span>
+        <span class="pl-meta">updated 2026-06-28</span>
+      </a></li>
+      <li><a href="topics/thrust-vector-from-attitude.html">
+        <span class="pl-title">Thrust vector from attitude angles</span>
+        <span class="pl-summary">Mapping attitude angles to a body thrust vector in the NED frame - how a desired orientation becomes the direction the rotors push.</span>
+        <span class="pl-meta">updated 2026-06-28</span>
+      </a></li>
+      <li><a href="topics/tiltdrone-fully-actuated-tilting-quadrotor.html">
+        <span class="pl-title">TiltDrone: Fully-Actuated Tilting Quadrotor Platform</span>
+        <span class="pl-summary">TiltDrone, a fully-actuated quadrotor whose biaxial tilting rotors decouple translation from rotation, giving independent control of all six degrees of freedom.</span>
+        <span class="pl-meta">updated 2026-06-28</span>
+      </a></li>
+    </ul>
+  </section>
+  <section class="tag-group" data-tag="sensing">
+    <h2 class="tag-head">sensing</h2>
+    <ul class="page-list">
+      <li><a href="topics/i2c-protocol.html">
+        <span class="pl-title">I2C Protocol</span>
+        <span class="pl-summary">The I2C two-wire, open-drain, master-slave bus that connects sensors like the MPU-6050 to a microcontroller on the same board.</span>
+        <span class="pl-meta">updated 2026-06-14</span>
+      </a></li>
+      <li><a href="topics/i2c-pullups.html">
+        <span class="pl-title">I2C Pull-up Resistors</span>
+        <span class="pl-summary">Why I2C needs pull-up resistors on SDA and SCL, how to size them, and what breaks when they are missing or wrong.</span>
+        <span class="pl-meta">updated 2026-06-14</span>
+      </a></li>
+      <li><a href="topics/mpu-6050.html">
+        <span class="pl-title">MPU-6050: MEMS IMU</span>
+        <span class="pl-summary">The MPU-6050 MEMS IMU: a 3-axis accelerometer and gyroscope on one die, the six raw measurements a complementary or Kalman filter fuses into attitude.</span>
+        <span class="pl-meta">updated 2026-06-14</span>
+      </a></li>
+    </ul>
+  </section>
+  <section class="tag-group" data-tag="state-estimation">
+    <h2 class="tag-head">state-estimation</h2>
+    <ul class="page-list">
+      <li><a href="topics/euler-body-rate-cross-coupling.html">
+        <span class="pl-title">Body rate cross-coupling and when you can ignore it</span>
+        <span class="pl-summary">How measured body rates couple into Euler-angle rates, and the conditions under which the cross-coupling terms can be safely ignored.</span>
+        <span class="pl-meta">updated 2026-06-28</span>
+      </a></li>
+      <li><a href="topics/complementary-filter.html">
+        <span class="pl-title">Complementary filter for attitude estimation</span>
+        <span class="pl-summary">Fusing a drifting gyro and a noisy accelerometer into one roll/pitch estimate by splitting the frequency domain - the simplest useful attitude filter.</span>
+        <span class="pl-meta">updated 2026-06-17</span>
+      </a></li>
+      <li><a href="topics/quaternion-kinematics-eskf.html">
+        <span class="pl-title">Quaternion kinematics for the error-state Kalman filter</span>
+        <span class="pl-summary">A working guide to Joan Sola&#x27;s quaternion kinematics for the error-state Kalman filter - the reference for fusing IMU data with external corrections in an ESKF/VIO estimator.</span>
+        <span class="pl-meta">updated 2026-07-06</span>
+      </a></li>
+      <li><a href="topics/accel-roll-pitch-derivation.html">
+        <span class="pl-title">Roll and pitch from accelerometer</span>
+        <span class="pl-summary">Deriving roll and pitch from the accelerometer out of the rotation matrix, so the formulas - and their signs - are never guesswork.</span>
+        <span class="pl-meta">updated 2026-06-17</span>
+      </a></li>
+      <li><a href="topics/rotating-coordinate-frames.html">
+        <span class="pl-title">Rotating coordinate frames and the transport theorem</span>
+        <span class="pl-summary">Rotating frames and the transport theorem - the NED-frame conventions and derivative rules behind body-to-world rotation in a flight estimator.</span>
+        <span class="pl-meta">updated 2026-06-28</span>
       </a></li>
     </ul>
   </section>
