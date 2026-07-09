@@ -21,7 +21,9 @@
   --tag-1: #d4643a;  --tag-2: #8296ad;  --tag-3: #96ad82;
   --tag-4: #c8a565;  --tag-5: #a08cb0;  --tag-6: #948b7e;
   --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace;
-  --sans: var(--mono);  /* the whole site speaks monospace */
+  /* body reading font — mono stays for chrome/headings/code (set explicitly).
+     System sans stack, no web fonts (zero external requests). */
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   /* faint blueprint grid, used behind the landing hero and the graph */
   --grid: linear-gradient(rgba(214, 207, 196, .035) 1px, transparent 1px),
           linear-gradient(90deg, rgba(214, 207, 196, .035) 1px, transparent 1px);
@@ -44,8 +46,8 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
-  font-size: 15.5px;   /* mono runs wide — slightly smaller, taller leading */
-  line-height: 1.7;
+  font-size: 16px;     /* proportional body — comfortable reading size */
+  line-height: 1.65;
 }
 
 [hidden] { display: none !important; }
