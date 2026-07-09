@@ -16,26 +16,28 @@
    * FORCE PARAMETERS — baked, no UI sliders. Elastic "Obsidian" tuning:
    *   - link strength is d3's DEFAULT (1 / min(degree of endpoints));
    *     do NOT set it explicitly — a fixed strength makes the graph rigid.
-   *   - charge has NO distanceMax — long-range repulsion spreads clusters.
-   *   - the center force is ~60x weaker than a typical positioning force,
-   *     so the layout drifts and breathes instead of being pinned.
-   *   - alphaDecay / velocityDecay stay at d3 defaults for the same reason.
+   *   - charge is capped with distanceMax so far-apart clusters stop
+   *     shoving each other off-screen (only nearby nodes repel).
+   *   - a gentle forceX/forceY toward the origin (gravity) pulls EVERY
+   *     node — and therefore every disconnected component — in toward the
+   *     centre, so unlinked groups separate but still gravitate inward
+   *     instead of drifting out of frame.
+   *   - alphaDecay / velocityDecay stay at d3 defaults so it still breathes.
    * ===================================================================== */
   var FORCE = {
-    linkDistance: 80,      // resting edge length (strength left at default!)
-    chargeStrength: -250,  // many-body repulsion, uncapped range
-    centerStrength: 0.001, // very weak pull toward the origin
-    collidePadding: 5      // clearance beyond node radius
+    linkDistance: 95,          // resting edge length (strength left at default!)
+    chargeStrength: -320,      // many-body repulsion (spreads nodes for readability)
+    chargeDistanceMax: 550,    // cap repulsion range: distant clusters don't blast apart
+    gravity: 0.04,             // gentle forceX/forceY pull toward centre (contains components)
+    collidePadding: 6          // clearance beyond node radius
   };
   var ZOOM_EXTENT = [0.1, 8]; // min/max zoom scale
   var INITIAL_SCALE = 0.8;    // starting zoom (view centered on origin)
   var FOCUS_SCALE = 2.8;      // zoom level after focusOnNode
-  /* Label level-of-detail tiers, keyed to zoom k:
-   *   k > LOD_ALL            → every label
-   *   LOD_TOP < k ≤ LOD_ALL  → only top-quartile-degree labels (min 1)
-   *   k ≤ LOD_TOP            → none */
-  var LOD_ALL = 0.7;
-  var LOD_TOP = 0.45;
+  /* Labels are binary on zoom: every label is shown above LABEL_K and every
+   * label is hidden below it (all at once — no per-node tiers). Hovered or
+   * focused labels stay visible regardless of zoom. */
+  var LABEL_K = 0.9;
   var FADE = { node: 0.12, label: 0.06, link: 0.08 }; // faded opacities
   var LINK_OPACITY = 0.6; // resting link stroke-opacity
   /* ===================================================================== */
@@ -168,20 +170,6 @@
       });
     }
 
-    /* ---- label level-of-detail: top quartile by degree (min 1 — the
-     * max-degree node always satisfies degree >= q3) ---- */
-    var degrees = nodes.map(function (n) { return n.degree || 0; })
-      .sort(function (a, b) { return a - b; });
-    var q3 = degrees[Math.min(degrees.length - 1,
-      Math.floor(degrees.length * 0.75))];
-    function isTopDegree(d) { return (d.degree || 0) >= q3; }
-
-    function lodTier(k) {
-      if (k > LOD_ALL) return 2;
-      if (k > LOD_TOP) return 1;
-      return 0;
-    }
-
     /* ---- svg scaffolding: one zoomable container g, then layers ---- */
     var svg = d3.select(svgEl);
     var container = svg.append('g').attr('class', 'graph-space');
@@ -224,13 +212,9 @@
     var hoverNodeId = null;       // node id currently hovered (null if none)
     var hoverLink = null;         // edge datum currently hovered (null if none)
     var userHasInteracted = false; // manual zoom/pan since the last focus
-    var currentTier = lodTier(INITIAL_SCALE);
+    var currentK = INITIAL_SCALE;
 
-    function labelOpacity(d) {
-      if (currentTier === 2) return 1;
-      if (currentTier === 1) return isTopDegree(d) ? 1 : 0;
-      return 0;
-    }
+    function lodOpacity() { return currentK >= LABEL_K ? 1 : 0; }
     /* One function decides every label's opacity from the full interaction
      * state (focus > link hover > node hover > plain LOD), and one named
      * transition channel ('label-fade') applies it everywhere — so LOD tier
@@ -239,17 +223,17 @@
      * tier; de-emphasised ones sit at FADE.label. */
     function labelTargetOpacity(o) {
       if (focusedNode) {
-        return isNeighbor(focusedNode.id, o.id) ? labelOpacity(o) : FADE.label;
+        return isNeighbor(focusedNode.id, o.id) ? 1 : FADE.label;
       }
       if (hoverLink) {
         var s = hoverLink.source.id || hoverLink.source;
         var t = hoverLink.target.id || hoverLink.target;
-        return (o.id === s || o.id === t) ? labelOpacity(o) : FADE.label;
+        return (o.id === s || o.id === t) ? 1 : FADE.label;
       }
       if (hoverNodeId !== null) {
-        return isNeighbor(hoverNodeId, o.id) ? labelOpacity(o) : FADE.label;
+        return isNeighbor(hoverNodeId, o.id) ? 1 : FADE.label;
       }
-      return labelOpacity(o);
+      return lodOpacity();
     }
     function updateLabels() {
       label.transition('label-fade').duration(200)
@@ -263,10 +247,12 @@
         .distance(FORCE.linkDistance))
         // no .strength(): d3's default keeps the links elastic
       .force('charge', d3.forceManyBody()
-        .strength(FORCE.chargeStrength))
-        // no .distanceMax(): uncapped repulsion spreads the layout
-      .force('center', d3.forceCenter(0, 0)
-        .strength(FORCE.centerStrength))
+        .strength(FORCE.chargeStrength)
+        .distanceMax(FORCE.chargeDistanceMax))
+      // gravity toward the origin pulls every node (and every disconnected
+      // component) inward, so unlinked groups gravitate to centre
+      .force('x', d3.forceX(0).strength(FORCE.gravity))
+      .force('y', d3.forceY(0).strength(FORCE.gravity))
       .force('collide', d3.forceCollide()
         .radius(function (d) { return radius(d) + FORCE.collidePadding; }));
 
@@ -295,11 +281,10 @@
       .on('zoom', function (event) {
         if (event.sourceEvent) userHasInteracted = true;
         container.attr('transform', event.transform);
-        var tier = lodTier(event.transform.k);
-        if (tier !== currentTier) {
-          currentTier = tier;
-          updateLabels();
-        }
+        var k = event.transform.k;
+        var crossed = (k >= LABEL_K) !== (currentK >= LABEL_K);
+        currentK = k;
+        if (crossed) updateLabels();
       })
       .on('end', function (event) {
         if (focusedNode && userHasInteracted && event.sourceEvent) {

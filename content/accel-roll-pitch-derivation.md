@@ -88,9 +88,11 @@ Apply the rotations in sequence: first roll, then pitch. The combined rotation w
 Multiplying and applying to $(0, 0, g)$:
 
 $$
-a_x = -g\sin\theta \\
-a_y = g\cos\theta \sin\phi \\
-a_z = g\cos\theta \cos\phi
+\begin{aligned}
+a_x &= -g\sin\theta \\
+a_y &= g\cos\theta \sin\phi \\
+a_z &= g\cos\theta \cos\phi
+\end{aligned}
 $$
 
 Now the formulas. For roll:

@@ -93,11 +93,13 @@ a_x = -g\sin\theta, \quad a_y = 0, \quad a_z = g\cos\theta
 <h2 id="roll-and-pitch">Roll AND pitch</h2>
 <p>Apply the rotations in sequence: first roll, then pitch. The combined rotation world → chip is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi>x</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>−</mi><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><msub><mi>R</mi><mi>y</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>−</mi><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">R_x(-\phi) \cdot R_y(-\theta)</annotation></semantics></math>.</p>
 <p>Multiplying and applying to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mi>g</mi><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0, 0, g)</annotation></semantics></math>:</p>
-<p><span class="math display">$$
-a_x = -g\sin\theta \\
-a_y = g\cos\theta \sin\phi \\
-a_z = g\cos\theta \cos\phi
-$$</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>a</mi><mi>x</mi></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>−</mi><mi>g</mi><mo>sin</mo><mi>θ</mi></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>a</mi><mi>y</mi></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>g</mi><mo>cos</mo><mi>θ</mi><mo>sin</mo><mi>ϕ</mi></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>a</mi><mi>z</mi></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><mi>g</mi><mo>cos</mo><mi>θ</mi><mo>cos</mo><mi>ϕ</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">
+\begin{aligned}
+a_x &amp;= -g\sin\theta \\
+a_y &amp;= g\cos\theta \sin\phi \\
+a_z &amp;= g\cos\theta \cos\phi
+\end{aligned}
+</annotation></semantics></math></p>
 <p>Now the formulas. For roll:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><msub><mi>a</mi><mi>y</mi></msub><msub><mi>a</mi><mi>z</mi></msub></mfrac><mo>=</mo><mfrac><mrow><mi>g</mi><mo>cos</mo><mi>θ</mi><mo>sin</mo><mi>ϕ</mi></mrow><mrow><mi>g</mi><mo>cos</mo><mi>θ</mi><mo>cos</mo><mi>ϕ</mi></mrow></mfrac><mo>=</mo><mo>tan</mo><mi>ϕ</mi></mrow><annotation encoding="application/x-tex">
 \frac{a_y}{a_z} = \frac{g\cos\theta\sin\phi}{g\cos\theta\cos\phi} = \tan\phi
